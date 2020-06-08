@@ -2,7 +2,7 @@ import discord
 import markovify
 import random
 import dogeystrings
-
+import dogeycmds
 
 client = discord.Client()
 
@@ -17,6 +17,10 @@ async def on_message(message):
     try:
         if message.content.find("help") != -1 or message.content.find("halp") != -1:
             await message.channel.send(dogeystrings.helpPrompt)
+            return
+        if message.content.find("commands") != -1:
+            for cmd in dogeycmds.cmds.keys():
+                await message.channel.send(cmd + ": " + dogeycmds.cmds[cmd])
             return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
