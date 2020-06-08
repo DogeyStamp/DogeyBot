@@ -1,9 +1,8 @@
 import discord
 import markovify
+import random
+import dogeystrings
 
-with open("doge2.txt",encoding="utf-8") as f:
-    text = f.read()
-text_model = markovify.Text(text)
 
 client = discord.Client()
 
@@ -16,15 +15,22 @@ async def on_message(message):
     if message.author == client.user or message.content.lower()[:5] != "bork ":
         return
     try:
+        if message.content.find("help") != -1 or message.content.find("halp") != -1:
+            await message.channel.send(dogeystrings.helpPrompt)
+            return
+        with open("dogebase.txt",encoding="utf-8") as f:
+            text = f.read().split("\n")
+            random.shuffle(text)
+            text = '\n'.join(text)
         text_model = markovify.Text(text)
-        response = text_model.make_short_sentence(350)
-        while not response:
-            response = text_model.make_short_sentence(350)
-        responseL = '!'.join(response.split('.')).split('!')
-        await message.channel.send('\n'.join(responseL[:3])+'\nif u want halp say bork bork i want help or something similar')
+        response = text_model.make_sentence()
+        if not response:
+            response = ''
+        responseL = response.split()
+        await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
         
     except Exception as err:
-        await message.channel.send("Error: {}".format(err))
+        await message.channel.send("Oh noes! I has an error: {}".format(err))
     
 
-client.run('NjI2OTA3MDExNDM0NTQ1MTYz.XY07HQ.Nx8z0oMZSb-r9YEr2G7hApr9EFo')
+client.run(dogeystrings.token)
