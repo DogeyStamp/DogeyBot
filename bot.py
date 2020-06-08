@@ -4,23 +4,12 @@ import random
 import dogeystrings
 import dogeycmds
 import sympy
-import multiprocessing
-import time
 
 client = discord.Client()
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-
-def calc(eq):
-    result = sympy.sympify(eq)
-    if len(str(result)) > 6000:
-        message.channel.send("aww. ur result is too chonker!!")
-        return
-    response = str(sympy.sympify(eq))
-    for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
-        message.channel.send(chunk)
 
 @client.event
 async def on_message(message):
@@ -38,11 +27,13 @@ async def on_message(message):
             whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")"]
             ind = max(message.content.lower().find("calculate"),message.content.lower().find("what's"),message.content.lower().find("whats"))
             eq = ''.join(ch for ch in message.content.lower()[ind:] if ch in whitelist)
-            p = multiprocessing.Process(target=calc, name="Calc", args=(eq,))
-            p.start()
-            await asyncio.sleep(1)
-            p.terminate()
-            p.join()
+            result = sympy.sympify(eq)
+            if len(str(result)) > 6000:
+                await message.channel.send("aww. ur result is too chonker!!")
+                return
+            response = str(sympy.sympify(eq))
+            for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
+                await message.channel.send(chunk)
             return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
