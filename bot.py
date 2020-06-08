@@ -27,7 +27,11 @@ async def on_message(message):
             whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")"]
             ind = max(message.content.lower().find("calculate"),message.content.lower().find("what's"),message.content.lower().find("whats"))
             eq = ''.join(ch for ch in message.content.lower()[ind:] if ch in whitelist)
-            result = sympy.sympify(eq)
+            try:
+                result = sympy.sympify(eq)
+            except Exception:
+                await message.channel.send("equals wowie!")
+                return
             if len(str(result)) > 6000:
                 await message.channel.send("aww. ur result is too chonker!!")
                 return
