@@ -4,6 +4,8 @@ import random
 import dogeystrings
 import dogeycmds
 import sympy
+import datetime
+import requests
 
 client = discord.Client()
 
@@ -16,12 +18,19 @@ async def on_message(message):
     if message.author == client.user or message.content.lower()[:4] != "bork":
         return
     try:
+        if message.content.lower().find("time") != -1 or message.content.lower().find("date") != -1:
+            await message.channel.send(datetime.datetime.now())
+            return
         if message.content.lower().find("help") != -1 or message.content.lower().find("halp") != -1:
             await message.channel.send(dogeystrings.helpPrompt)
             return
         if message.content.lower().find("commands") != -1:
+            response = ""
             for cmd in dogeycmds.cmds.keys():
-                await message.channel.send(cmd + ": " + dogeycmds.cmds[cmd])
+               response = response + "\n{0}: {1}".format(cmd, dogeycmds.cmds[cmd][0])
+               response = response + "\nUsage: {}".format(dogeycmds.cmds[cmd][1])
+            for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
+                await message.channel.send(chunk)
             return
         if message.content.lower().find("calculate") != -1 or message.content.lower().find("what's") != -1 or message.content.lower().find("whats") != -1:
             whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")"]
