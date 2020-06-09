@@ -91,7 +91,23 @@ async def on_message(message):
             await message.channel.send(mems[0][0])
             return
         if message.content.lower().find("quote") != -1:
-            with open("dogeFortune.txt",encoding="utf-8") as f:
+            num = random.randint(1,11111)
+            level = 1
+            if num <=10000:
+                level = 1
+            elif num <= 11000:
+                level = 2
+            elif num <= 11100:
+                level = 3
+            elif num <= 11100:
+                level = 4
+            elif num <= 11100:
+                level = 5
+            elif num <= 11110:
+                level = 6
+            elif num <= 11111:
+                level = 7
+            with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
                 await message.channel.send(random.choice(text))
                 return
