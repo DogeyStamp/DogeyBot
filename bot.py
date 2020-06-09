@@ -5,9 +5,13 @@ import dogeystrings
 import dogeycmds
 import sympy
 import datetime
-import requests
+import praw
 
 client = discord.Client()
+
+reddit = praw.Reddit(client_id="E3x53vfG2tSR_A",
+                     client_secret="_jioOka6CDeMoFuT49WqMJ4lEmA",
+                     user_agent="discord:DogeyBot:v0.1 (by u/DogeyStamp)")
 
 @client.event
 async def on_ready():
@@ -48,6 +52,17 @@ async def on_message(message):
             for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
                 await message.channel.send(chunk)
             return
+        if message.content.lower().find("meme") != -1:
+            mems = []
+            for submission in reddit.subreddit("doge").hot(limit=30):
+                imgEnds = ["png","svg","jpg","jpeg","gif","tiff"]
+                for ending in imgEnds:
+                    if submission.url.endswith(ending):
+                        mems.append([submission.url,submission.title])
+            random.shuffle(mems)
+            embed=discord.Embed(title=mems[0][1], url=mems[0][0])
+            await message.channel.send(embed=embed)
+
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
