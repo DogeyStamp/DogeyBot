@@ -13,3 +13,4 @@ postStrs =  ["here is ur rebit post",
             "wow such entertainment",
             "bork bork here is rebbit post",
             "rebbit is cool"]
+rare = ["meh","ok","common","uncommon","rare","epic","legendary"]

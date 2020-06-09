@@ -109,7 +109,7 @@ async def on_message(message):
                 level = 7
             with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
-                await message.channel.send(random.choice(text))
+                await message.channel.send(random.choice(text) + "\nRarity level: ***{}***".format(dogeystrings.rare[level-1]))
                 return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
