@@ -90,6 +90,11 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             await message.channel.send(mems[0][0])
             return
+        if message.content.lower().find("quote") != -1:
+            with open("dogeFortune.txt",encoding="utf-8") as f:
+                text = f.read().split("%")
+                await message.channel.send(random.choice(text))
+                return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
