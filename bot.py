@@ -58,10 +58,12 @@ async def on_message(message):
                 imgEnds = ["png","svg","jpg","jpeg","gif","tiff"]
                 for ending in imgEnds:
                     if submission.url.endswith(ending):
-                        mems.append([submission.url,submission.title])
+                        mems.append([submission.url,submission.title,submission.permalink])
             random.shuffle(mems)
-            embed=discord.Embed(title=mems[0][1], url=mems[0][0])
+            embed=discord.Embed(title=mems[0][1], url='https://reddit.com'+mems[0][2])
+            embed.set_image(url=mems[0][0])
             await message.channel.send(embed=embed)
+            return
 
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
