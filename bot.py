@@ -31,15 +31,18 @@ async def on_message(message):
         if message.content.lower().find("commands") != -1:
             response = ""
             for cmd in dogeycmds.cmds.keys():
-               response = response + "\n{0}: {1}".format(cmd, dogeycmds.cmds[cmd][0])
+               response = response + "\n_***{0}***_: *{1}*".format(cmd, dogeycmds.cmds[cmd][0])
                response = response + "\nUsage: {}".format(dogeycmds.cmds[cmd][1])
             for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
                 await message.channel.send(chunk)
             return
         if message.content.lower().find("calculate") != -1 or message.content.lower().find("what's") != -1 or message.content.lower().find("whats") != -1:
-            whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")"]
+            whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")","."]
             ind = max(message.content.lower().find("calculate"),message.content.lower().find("what's"),message.content.lower().find("whats"))
             eq = ''.join(ch for ch in message.content.lower()[ind:] if ch in whitelist)
+            if eq == '':
+                await message.channel.send("equals wowie!")
+                return
             try:
                 result = sympy.sympify(eq)
             except Exception:
@@ -65,7 +68,28 @@ async def on_message(message):
             embed.add_field(name="Upvotes", value="{}".format(mems[0][3]), inline=True)
             await message.channel.send(embed=embed)
             return
-
+        if message.content.lower().find("politic") != -1:
+            mems = []
+            for submission in reddit.subreddit("politics").hot(limit=30):
+                mems.append([submission.url,submission.title,submission.permalink,submission.score])
+            random.shuffle(mems)
+            embed=discord.Embed(title=mems[0][1], url='https://reddit.com'+mems[0][2])
+            embed.add_field(name="Upvotes", value="{}".format(mems[0][3]), inline=True)
+            await message.channel.send(random.choice(dogeystrings.postStrs))
+            await message.channel.send(embed=embed)
+            await message.channel.send(mems[0][0])
+            return
+        if message.content.lower().find("news") != -1:
+            mems = []
+            for submission in reddit.subreddit("news").hot(limit=30):
+                mems.append([submission.url,submission.title,submission.permalink,submission.score])
+            random.shuffle(mems)
+            embed=discord.Embed(title=mems[0][1], url='https://reddit.com'+mems[0][2])
+            embed.add_field(name="Upvotes", value="{}".format(mems[0][3]), inline=True)
+            await message.channel.send(random.choice(dogeystrings.postStrs))
+            await message.channel.send(embed=embed)
+            await message.channel.send(mems[0][0])
+            return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)

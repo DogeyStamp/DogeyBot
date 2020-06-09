@@ -1,5 +1,7 @@
-cmds = {"help":["Get basic help. Know how to talk to **good** doggos!","Bork bork. I need ***help***!!"],
-        "commands":["Detailed help for all commands.","Bork. What's all the ***commands*** you have??"],
-        "calculate":["Calculate an equation.","Bork. Hey DogeyBot, ***what's*** 1 + 1?"],
-        "time":["Get the time.", "Bork bork!! What's the ***time***?!"],
-        "meme":["Get a meme.", "Bork meme pls"]}
+cmds = {"help":["get halp for doggo speak!","Bork bork. I need ***help***!!"],
+        "commands":["detailed doggo-speak lessons","Bork. What's all the ***commands*** you have??"],
+        "calculate":["nerd doggo calculates equation for you!","Bork. Hey DogeyBot, ***what's*** 1 + 1?"],
+        "time":["get the time. it's snacc time!", "Bork bork!! What's the ***time***?!"],
+        "meme":["doggo memes. such funny", "Bork meme pls"],
+        "politics":["r/politics posts","bork bork i want some ***politics*** to make me rage"],
+        "news":["get the news ~~about doggos~~","bork bork doggo of the lake what ***news*** do you have?"]} 
