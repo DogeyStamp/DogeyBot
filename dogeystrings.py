@@ -1,4 +1,3 @@
-token = "NjI2OTA3MDExNDM0NTQ1MTYz.XY07HQ.Nx8z0oMZSb-r9YEr2G7hApr9EFo"
 helpStrs =  ["if u want halp say bork bork i want help or something similar",
             "bork bork need help? say bork bork halp",
             "bork bork need halp? say bork bork help",

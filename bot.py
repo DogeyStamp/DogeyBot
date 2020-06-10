@@ -3,6 +3,7 @@ import markovify
 import random
 import dogeystrings
 import dogeycmds
+import dogeytoken
 import sympy
 import datetime
 import praw
@@ -126,4 +127,4 @@ async def on_message(message):
         await message.channel.send("Oh noes! I has an error: {}".format(err))
     
 
-client.run(dogeystrings.token)
+client.run(dogeytoken.token)

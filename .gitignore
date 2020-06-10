@@ -1,3 +1,4 @@
 launch.json
 env
 __pycache__/*
+dogeytoken.py
