@@ -99,7 +99,7 @@ async def on_message(message):
                 level = 2
             elif num >= 100000:
                 level = 3
-            elif num >= 90000:
+            elif num >= 50000:
                 level = 4
             elif num >= 9000:
                 level = 5
