@@ -4,6 +4,7 @@ green grian
 -DogeyStamp
 %grian green
 but he's red
+-DogeyStamp
 %uncoool
 -DogeyStamp
 %gr eeeeeeeeeeeeeeeeeeeeeeeeeee en
