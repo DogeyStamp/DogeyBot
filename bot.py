@@ -91,21 +91,21 @@ async def on_message(message):
             await message.channel.send(mems[0][0])
             return
         if message.content.lower().find("quote") != -1:
-            num = random.randint(1,11111)
+            num = random.randint(1,10000000)
             level = 1
-            if num <=10000:
+            if num >= 7000000:
                 level = 1
-            elif num <= 11000:
+            elif num >= 3000000:
                 level = 2
-            elif num <= 11100:
+            elif num >= 100000:
                 level = 3
-            elif num <= 11100:
+            elif num >= 90000:
                 level = 4
-            elif num <= 11100:
+            elif num >= 9000:
                 level = 5
-            elif num <= 11110:
+            elif num >= 900:
                 level = 6
-            elif num <= 11111:
+            elif num >= 90:
                 level = 7
             with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
