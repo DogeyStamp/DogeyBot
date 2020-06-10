@@ -105,7 +105,7 @@ async def on_message(message):
                 level = 5
             elif num >= 900:
                 level = 6
-            elif num >= 90:
+            elif num >= 800:
                 level = 7
             with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
