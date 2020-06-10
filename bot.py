@@ -5,8 +5,11 @@ import dogeystrings
 import dogeycmds
 import dogeytoken
 import sympy
+import time
 import datetime
 import praw
+import collections
+import asyncio
 
 client = discord.Client()
 
@@ -14,22 +17,92 @@ reddit = praw.Reddit(client_id="E3x53vfG2tSR_A",
                      client_secret="_jioOka6CDeMoFuT49WqMJ4lEmA",
                      user_agent="discord:DogeyBot:v0.1 (by u/DogeyStamp)")
 
+cooldown = {}
+save = {}
+with open("save","r", encoding="utf-8") as saveFile:
+    saveFile.seek(0)
+    newSave = saveFile.read()
+    save = eval(newSave)
+saveFile.close()
+print("Data retrieval [ OK ]")
+
+async def shutdown():
+    tasks = [task for task in asyncio.Task.all_tasks() if task is not
+             asyncio.tasks.Task.current_task()]
+    list(map(lambda task: task.cancel(), tasks))
+    results = await asyncio.gather(*tasks, return_exceptions=False)
+
+def saveData():
+    with open("save","w", encoding="utf-8") as saveFile:
+        saveFile.write(str(save))
+        saveFile.close()
+
+async def saveTask():
+    try:
+        while(True):
+            await asyncio.sleep(5)
+            saveData()
+    except asyncio.CancelledError:
+        print("Successful shutdown of data save task.")
 @client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
+    print('Login as {0.user} [ OK ]'.format(client))
+    client.loop.create_task(saveTask())
 @client.event
 async def on_message(message):
+    author = message.author.id
     if message.author == client.user or message.content.lower()[:4] != "bork":
         return
+    if not save.get(author):
+        save[author] = {}
+        save[author]["coins"] = 0
+    if "shutdown" in message.content:
+        if author == 437654201863241740:
+            await message.channel.send("initiating shutdown becuz i am good doggo")
+            print("Initiating shutdown...")
+            saveData()
+            print("Data saved successfully. Exiting...")
+            await shutdown()
+            exit(0)
     try:
-        if message.content.lower().find("time") != -1 or message.content.lower().find("date") != -1:
+        cmdDict = collections.OrderedDict([("time","time"),
+                    ("date","time"),
+                    ("help","help"),
+                    ("halp","help"),
+                    ("commands","commands"),
+                    ("bank","balance"),
+                    ("dogecoin","balance"),
+                    ("balance","balance"),
+                    ("meme","meme"),
+                    ("maymay","meme"),
+                    ("politic","politic"),
+                    ("news","news"),
+                    ("quote","quote"),
+                    ("calculate","calculate"),
+                    ("what's","calculate"),
+                    ("whats","calculate")])
+        cmd = ''
+        for i in cmdDict.keys():
+            if message.content.lower().find(i) != -1:
+                cmd = cmdDict[i]
+                break
+        if cmd:
+            if cooldown.get(author):
+                if cooldown[author].get(cmd) and time.time() - cooldown.get(author)[cmd] < dogeycmds.cmds[cmd][2]:
+                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(dogeycmds.cmds[cmd][2]-round(time.time() - cooldown[author][cmd],2),2)))
+                    return
+                else:
+                    cooldown[author][cmd] = time.time()
+            else:
+                cooldown[author] = {}
+                cooldown[author][cmd] = time.time()
+        if cmd == 'time':
             await message.channel.send(datetime.datetime.now())
             return
-        if message.content.lower().find("help") != -1 or message.content.lower().find("halp") != -1:
+        if cmd == 'help':
             await message.channel.send(dogeystrings.helpPrompt)
             return
-        if message.content.lower().find("commands") != -1:
+        if cmd == 'commands':
             response = ""
             for cmd in dogeycmds.cmds.keys():
                response = response + "\n_***{0}***_: *{1}*".format(cmd, dogeycmds.cmds[cmd][0])
@@ -37,7 +110,7 @@ async def on_message(message):
             for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
                 await message.channel.send(chunk)
             return
-        if message.content.lower().find("calculate") != -1 or message.content.lower().find("what's") != -1 or message.content.lower().find("whats") != -1:
+        if cmd == 'calculate':
             whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")","."]
             ind = max(message.content.lower().find("calculate"),message.content.lower().find("what's"),message.content.lower().find("whats"))
             eq = ''.join(ch for ch in message.content.lower()[ind:] if ch in whitelist)
@@ -56,7 +129,7 @@ async def on_message(message):
             for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
                 await message.channel.send(chunk)
             return
-        if message.content.lower().find("meme") != -1:
+        if cmd == 'meme':
             mems = []
             for submission in reddit.subreddit("doge").hot(limit=30):
                 imgEnds = ["png","svg","jpg","jpeg","gif","tiff"]
@@ -69,7 +142,7 @@ async def on_message(message):
             embed.add_field(name="Upvotes", value="{}".format(mems[0][3]), inline=True)
             await message.channel.send(embed=embed)
             return
-        if message.content.lower().find("politic") != -1:
+        if cmd == 'politic':
             mems = []
             for submission in reddit.subreddit("politics").hot(limit=30):
                 mems.append([submission.url,submission.title,submission.permalink,submission.score])
@@ -80,7 +153,7 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             await message.channel.send(mems[0][0])
             return
-        if message.content.lower().find("news") != -1:
+        if cmd == 'news':
             mems = []
             for submission in reddit.subreddit("news").hot(limit=30):
                 mems.append([submission.url,submission.title,submission.permalink,submission.score])
@@ -91,9 +164,10 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             await message.channel.send(mems[0][0])
             return
-        if message.content.lower().find("quote") != -1:
+        if cmd == 'quote':
             num = random.randint(1,10000000)
             level = 1
+            extraReward = 0
             if num >= 7000000:
                 level = 1
             elif num >= 3000000:
@@ -102,16 +176,32 @@ async def on_message(message):
                 level = 3
             elif num >= 50000:
                 level = 4
+                extraReward = 1
             elif num >= 9000:
                 level = 5
+                extraReward = 10
             elif num >= 900:
                 level = 6
+                extraReward = 100
             elif num >= 800:
                 level = 7
+                extraReward = 5000
             with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
-                await message.channel.send(random.choice(text) + "\nRarity level: ***{}***".format(dogeystrings.rare[level-1]))
+                extraRewardStr = ''
+                if extraReward != 0:
+                    extraRewardStr = 'bork reward: {} dogecoins'.format(extraReward)
+                    save[author]["coins"] += extraReward
+                await message.channel.send(random.choice(text) + "\nRarity level: ***{0}***\n{1}".format(dogeystrings.rare[level-1],extraRewardStr))
                 return
+        if cmd == "balance":
+            if save[author]["coins"] == 0:
+                await message.channel.send("u brok :(")
+            else:
+                embed=discord.Embed()
+                embed.add_field(name="{}'s balance".format(message.author.name), value=random.choice(dogeystrings.balStrs).format(save[author]["coins"]), inline=False)
+                await message.channel.send(embed=embed)
+            return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)

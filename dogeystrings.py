@@ -12,4 +12,16 @@ postStrs =  ["here is ur rebit post",
             "wow such entertainment",
             "bork bork here is rebbit post",
             "rebbit is cool"]
+coolStrs =  ["stap u too fast {} sec pls",
+            "{} sec u bork too fast",
+            "such fast. such annoying. pls wait {} sec ok??",
+            "wow pls wait {} sec",
+            "bork bork BORK!! u too fast {} sec",
+            "pls wait {} sec k??"]
+balStrs = ["u has {} dogecoins",
+            "wow {} doggocoins",
+            "u balance: {} dogecoin!!",
+            "{} dogecoins!!",
+            "bork bork! u got {} coin",
+            "{} nice dogecoin"]
 rare = ["meh","ok","common","uncommon","rare","epic","legendary"]
