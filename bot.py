@@ -26,12 +26,6 @@ with open("save","r", encoding="utf-8") as saveFile:
 saveFile.close()
 print("Data retrieval [ OK ]")
 
-async def shutdown():
-    tasks = [task for task in asyncio.Task.all_tasks() if task is not
-             asyncio.tasks.Task.current_task()]
-    list(map(lambda task: task.cancel(), tasks))
-    results = await asyncio.gather(*tasks, return_exceptions=False)
-
 def saveData():
     with open("save","w", encoding="utf-8") as saveFile:
         saveFile.write(str(save))
@@ -62,7 +56,6 @@ async def on_message(message):
             print("Initiating shutdown...")
             saveData()
             print("Data saved successfully. Exiting...")
-            await shutdown()
             exit(0)
     try:
         cmdDict = collections.OrderedDict([("time","time"),
@@ -179,7 +172,7 @@ async def on_message(message):
                 extraReward = 1
             elif num >= 9000:
                 level = 5
-                extraReward = 10
+                extraReward = 50
             elif num >= 900:
                 level = 6
                 extraReward = 100
