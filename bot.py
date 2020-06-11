@@ -175,7 +175,7 @@ async def on_message(message):
                 extraReward = 50
             elif num >= 900:
                 level = 6
-                extraReward = 100
+                extraReward = 500
             elif num >= 800:
                 level = 7
                 extraReward = 5000
