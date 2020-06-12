@@ -64,7 +64,8 @@ async def on_message(message):
                     ("halp","help"),
                     ("commands","commands"),
                     ("bank","balance"),
-                    ("dogecoin","balance"),
+                    ("bal","balance"),
+                    ("coin","balance"),
                     ("balance","balance"),
                     ("meme","meme"),
                     ("maymay","meme"),
@@ -188,11 +189,25 @@ async def on_message(message):
                 await message.channel.send(random.choice(text) + "\nRarity level: ***{0}***\n{1}".format(dogeystrings.rare[level-1],extraRewardStr))
                 return
         if cmd == "balance":
-            if save[author]["coins"] == 0:
-                await message.channel.send("u brok :(")
+            mentioned = False
+            if len(message.mentions) > 0:
+                balUser = message.mentions[0]
+                balName = message.mentions[0].name
+                mentioned = True
+            else:
+                balUser = message.author
+                balName = message.author.name
+            if not save.get(balUser.id):
+                await message.channel.send("he brok :)")
+                return
+            if save[balUser.id]["coins"] == 0:
+                if mentioned:
+                    await message.channel.send("he brok :)")
+                else:
+                    await message.channel.send("u brok :(")
             else:
                 embed=discord.Embed()
-                embed.add_field(name="{}'s balance".format(message.author.name), value=random.choice(dogeystrings.balStrs).format(save[author]["coins"]), inline=False)
+                embed.add_field(name="{}'s balance".format(balName), value=random.choice(dogeystrings.balStrs).format(save[balUser.id]["coins"]), inline=False)
                 await message.channel.send(embed=embed)
             return
         with open("dogebase.txt",encoding="utf-8") as f:

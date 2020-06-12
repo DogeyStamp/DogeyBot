@@ -18,10 +18,10 @@ coolStrs =  ["stap u too fast {} sec pls",
             "wow pls wait {} sec",
             "bork bork BORK!! u too fast {} sec",
             "pls wait {} sec k??"]
-balStrs = ["u has {} dogecoins",
+balStrs = ["has {} dogecoins",
             "wow {} doggocoins",
-            "u balance: {} dogecoin!!",
+            "da balance: {} dogecoin!!",
             "{} dogecoins!!",
-            "bork bork! u got {} coin",
+            "bork bork! got {} coin",
             "{} nice dogecoin"]
 rare = ["meh","ok","common","uncommon","rare","epic","legendary"]
