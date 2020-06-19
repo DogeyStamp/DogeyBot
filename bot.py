@@ -1,3 +1,4 @@
+print("DogeyBot starting...\nThis program is Doge-Approved, and created by DogeyStamp.")
 import discord
 import markovify
 import random
@@ -10,6 +11,12 @@ import datetime
 import praw
 import collections
 import asyncio
+import dogeyitems
+
+def timeStampPrint(toPrint):
+    print("[{}] ".format(datetime.datetime.now()) + toPrint)
+
+timeStampPrint("[INFO] Imports successful")
 
 client = discord.Client()
 
@@ -24,7 +31,7 @@ with open("save","r", encoding="utf-8") as saveFile:
     newSave = saveFile.read()
     save = eval(newSave)
 saveFile.close()
-print("Data retrieval [ OK ]")
+timeStampPrint("[INFO] Data retrieval successful")
 
 def saveData():
     with open("save","w", encoding="utf-8") as saveFile:
@@ -34,13 +41,13 @@ def saveData():
 async def saveTask():
     try:
         while(True):
-            await asyncio.sleep(5)
+            await asyncio.sleep(30)
             saveData()
     except asyncio.CancelledError:
-        print("Successful shutdown of data save task.")
+        timeStampPrint("[INFO] Shutdown of data save task successful.")
 @client.event
 async def on_ready():
-    print('Login as {0.user} [ OK ]'.format(client))
+    timeStampPrint('[INFO] Login as {0.user} successful.'.format(client))
     client.loop.create_task(saveTask())
 @client.event
 async def on_message(message):
@@ -57,9 +64,9 @@ async def on_message(message):
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
-                print("Initiating shutdown...")
+                timeStampPrint("[INFO] Initiating shutdown...")
                 saveData()
-                print("Data saved successfully. Exiting...")
+                timeStampPrint("[INFO] Data saved successfully. Exiting...")
                 exit(0)
         if random.randint(1,5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
@@ -237,6 +244,22 @@ async def on_message(message):
                 embed.add_field(name="{}'s balance".format(balName), value=random.choice(dogeystrings.balStrs).format(save[balUser.id]["coins"]), inline=False)
                 await message.channel.send(embed=embed)
             return
+        if cmd == "inventory":
+            embed = discord.Embed(title="{}'s inventory".format(message.author.name))
+            nItems = len(save[author]["inventory"].keys())
+            if nItems == 0:
+                embed.description = 'oof u has no item. such empty.'
+            else:
+                embed.description = "{} items. such cool".format(nItems)
+            for item in save[author]["inventory"].keys():
+                itemObj = dogeyitems.dic[item]
+                if not item in dogeyitems.itemIds:
+                    timeStampPrint("[WARN] Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                    continue
+                for i in range(1,100):
+                    embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
+            await message.channel.send(embed=embed)
+            return
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
@@ -248,7 +271,8 @@ async def on_message(message):
         responseL = response.split()
         await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
     except Exception as err:
-        await message.channel.send("oh noes! I has an error: {}".format(err))
+        await message.channel.send("oh noes! I has an error, pls tell dogeystamp")
+        timeStampPrint("[ERROR] {}".format(err))
     
 
 client.run(dogeytoken.token)
