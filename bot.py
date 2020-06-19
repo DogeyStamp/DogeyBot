@@ -12,6 +12,7 @@ import praw
 import collections
 import asyncio
 import dogeyitems
+from math import ceil
 
 def timeStampPrint(toPrint):
     print("[{}] ".format(datetime.datetime.now()) + toPrint)
@@ -249,15 +250,27 @@ async def on_message(message):
             nItems = len(save[author]["inventory"].keys())
             if nItems == 0:
                 embed.description = 'oof u has no item. such empty.'
+                await message.channel.send(embed=embed)
+                return
             else:
                 embed.description = "{} items. such cool".format(nItems)
-            for item in save[author]["inventory"].keys():
+            itemList = [item for item in save[author]["inventory"].keys()]
+            itemPerPage = 12
+            totalPages = ceil(len(itemList)/itemPerPage)
+            pageNmb = ''.join([i for i in message.content if i.isdigit()])
+            if bool(pageNmb):
+                pageNmb = int(pageNmb)-1
+            else:
+                pageNmb = 0
+            if pageNmb+1>totalPages or pageNmb < 0:
+                pageNmb = 0
+            embed.set_footer(text="page {} out of {}".format(pageNmb+1,totalPages))
+            for item in itemList[pageNmb*itemPerPage:(pageNmb+1)*itemPerPage]:
                 itemObj = dogeyitems.dic[item]
                 if not item in dogeyitems.itemIds:
                     timeStampPrint("[WARN] Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                     continue
-                for i in range(1,100):
-                    embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
+                embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
             await message.channel.send(embed=embed)
             return
         with open("dogebase.txt",encoding="utf-8") as f:
