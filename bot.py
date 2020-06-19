@@ -226,7 +226,7 @@ async def on_message(message):
         if random.randint(1,5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
     except Exception as err:
-        await message.channel.send("Oh noes! I has an error: {}".format(err))
+        await message.channel.send("oh noes! I has an error: {}".format(err))
     
 
 client.run(dogeytoken.token)
