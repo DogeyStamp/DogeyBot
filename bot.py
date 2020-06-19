@@ -77,7 +77,9 @@ async def on_message(message):
                     ("quote","quote"),
                     ("calculate","calculate"),
                     ("what's","calculate"),
-                    ("whats","calculate")])
+                    ("inventory","inventory"),
+                    ("inv","inventory")
+                    ("whats","calculate"),])
         cmd = ''
         for i in cmdDict.keys():
             if message.content.lower().find(i) != -1:
