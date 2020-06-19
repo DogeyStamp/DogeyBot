@@ -49,7 +49,10 @@ async def on_message(message):
         return
     if not save.get(author):
         save[author] = {}
-        save[author]["coins"] = 0
+    saveDefaults = {"coins":0,"inventory":{}}
+    for default in saveDefaults.keys():
+        if not save[author].get(default):
+            save[author][default] = saveDefaults[default]
     if "shutdown" in message.content:
         if author == 437654201863241740:
             await message.channel.send("initiating shutdown becuz i am good doggo")
@@ -220,7 +223,8 @@ async def on_message(message):
             response = ''
         responseL = response.split()
         await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
-        
+        if random.randint(1,5) == 1:
+            await message.channel.send("\n" + random.choice(dogeystrings.tips))
     except Exception as err:
         await message.channel.send("Oh noes! I has an error: {}".format(err))
     

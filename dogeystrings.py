@@ -24,4 +24,9 @@ balStrs = ["has {} dogecoins",
             "{} dogecoins!!",
             "bork bork! got {} coin",
             "{} nice dogecoin"]
+tips = ["bork tipp! u can get sweet sweet dogecoin from getting rare, epic or legendary quotes",
+        "tipp: check ur dogecoins by saying 'bork how many coins i have??'",
+        "TIPP! me is nerd doggo so i can calculate stuff, just say 'bork whats 1 + 1'",
+        "nice tipp: remember to use * for multiplication when using me to calculate",
+        "rich doggo tipp! u can use the balance command to see other people's balances 'bork whats @someones's balance'"]
 rare = ["meh","ok","common","uncommon","rare","epic","legendary"]
