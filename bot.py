@@ -44,28 +44,30 @@ async def on_ready():
     client.loop.create_task(saveTask())
 @client.event
 async def on_message(message):
-    author = message.author.id
-    if message.author == client.user or message.content.lower()[:4] != "bork":
-        return
-    if not save.get(author):
-        save[author] = {}
-    saveDefaults = {"coins":0,"inventory":{}}
-    for default in saveDefaults.keys():
-        if not save[author].get(default):
-            save[author][default] = saveDefaults[default]
-    if "shutdown" in message.content:
-        if author == 437654201863241740:
-            await message.channel.send("initiating shutdown becuz i am good doggo")
-            print("Initiating shutdown...")
-            saveData()
-            print("Data saved successfully. Exiting...")
-            exit(0)
     try:
+        author = message.author.id
+        if message.author == client.user or message.content.lower()[:4] != "bork":
+            return
+        if not save.get(author):
+            save[author] = {}
+        saveDefaults = {"coins":0,"inventory":{}}
+        for default in saveDefaults.keys():
+            if not save[author].get(default):
+                save[author][default] = saveDefaults[default]
+        if "shutdown" in message.content:
+            if author == 437654201863241740:
+                await message.channel.send("initiating shutdown becuz i am good doggo")
+                print("Initiating shutdown...")
+                saveData()
+                print("Data saved successfully. Exiting...")
+                exit(0)
+        if random.randint(1,5) == 1:
+            await message.channel.send("\n" + random.choice(dogeystrings.tips))
         cmdDict = collections.OrderedDict([("time","time"),
+                    ("commands","commands"),
                     ("date","time"),
                     ("help","help"),
                     ("halp","help"),
-                    ("commands","commands"),
                     ("bank","balance"),
                     ("bal","balance"),
                     ("coin","balance"),
@@ -78,7 +80,7 @@ async def on_message(message):
                     ("calculate","calculate"),
                     ("what's","calculate"),
                     ("inventory","inventory"),
-                    ("inv","inventory")
+                    ("inv","inventory"),
                     ("whats","calculate"),])
         cmd = ''
         for i in cmdDict.keys():
@@ -102,12 +104,32 @@ async def on_message(message):
             await message.channel.send(dogeystrings.helpPrompt)
             return
         if cmd == 'commands':
-            response = ""
+            msgCpy = message.content.lower()
+            msgCpy = msgCpy.replace("bork","").replace("commands","",1)
             for cmd in dogeycmds.cmds.keys():
-               response = response + "\n_***{0}***_: *{1}*".format(cmd, dogeycmds.cmds[cmd][0])
-               response = response + "\nUsage: {}".format(dogeycmds.cmds[cmd][1])
-            for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
-                await message.channel.send(chunk)
+                if msgCpy.find(cmd) != -1:
+                    embed=discord.Embed(title=cmd,description=dogeycmds.cmds[cmd][0])
+                    embed.set_footer(text="bork bork!")
+                    embed.add_field(name='usage',value=dogeycmds.cmds[cmd][1])
+                    await message.channel.send(embed=embed)
+                    return
+            for category in dogeycmds.categories:
+                if category in message.content.lower():
+                    response = ''
+                    for cmd in dogeycmds.cmds.keys():
+                        if not dogeycmds.cmds[cmd][3] == category:
+                            continue
+                        response += "`{}` ".format(cmd)
+                    embed=discord.Embed(title=category,description=response)
+                    embed.set_footer(text="remember to bork before commands!!")
+                    await message.channel.send(embed=embed)
+                    break
+            else:
+                embed=discord.Embed(title="Help")
+                for category in dogeycmds.categories:
+                    embed.add_field(name=category, value="`bork commands {}`".format(category), inline=True)
+                embed.set_footer(text="bork bork!")
+                await message.channel.send(embed=embed)
             return
         if cmd == 'calculate':
             whitelist = ["1","2","3","4","5","6","7","8","9","0","*","+","%","-","/","!","^","(",")","."]
@@ -225,8 +247,6 @@ async def on_message(message):
             response = ''
         responseL = response.split()
         await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
-        if random.randint(1,5) == 1:
-            await message.channel.send("\n" + random.choice(dogeystrings.tips))
     except Exception as err:
         await message.channel.send("oh noes! I has an error: {}".format(err))
     

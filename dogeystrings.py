@@ -4,8 +4,9 @@ helpStrs =  ["if u want halp say bork bork i want help or something similar",
             "for help with talking to me, say bork help",
             "need halp? say bork halp me pls",
             "for halp say bork bork pls gib halp"]
-helpPrompt = '''Henlo! I am DogeyBot.
-I am good doggo. To talk to me, say bork. You can talk naturally, like "Bork bork I want help". For a list of commands, say "bork i want list of commands" or "bork bork what are the commands?!"'''
+helpPrompt = '''henlo! i am DogeyBot.
+i am good doggo. to talk to me, say bork. u can talk naturally, like "Bork bork I want help". for a list of commands, say "bork i want list of commands" or "bork bork what are the commands?!"
+if u want help for an individual command, say "bork whats the help command do??"'''
 postStrs =  ["here is ur rebit post",
             "i like rebbit",
             "reddet posts? wow such cool",
