@@ -12,6 +12,7 @@ import praw
 import collections
 import asyncio
 import dogeyitems
+import dogeymine
 from math import ceil
 
 def timeStampPrint(toPrint):
@@ -25,6 +26,7 @@ reddit = praw.Reddit(client_id="E3x53vfG2tSR_A",
                      client_secret="_jioOka6CDeMoFuT49WqMJ4lEmA",
                      user_agent="discord:DogeyBot:v0.1 (by u/DogeyStamp)")
 
+mine = {}
 cooldown = {}
 save = {}
 with open("save","r", encoding="utf-8") as saveFile:
@@ -89,6 +91,7 @@ async def on_message(message):
                     ("what's","calculate"),
                     ("inventory","inventory"),
                     ("inv","inventory"),
+                    ("mine","mine"),
                     ("whats","calculate"),])
         cmd = ''
         for i in cmdDict.keys():
@@ -273,6 +276,24 @@ async def on_message(message):
                 embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
             await message.channel.send(embed=embed)
             return
+        if cmd == "mine":
+            args = message.content.lower().replace("bork",'').replace("mine","")
+            embed = discord.Embed(title="{}'s mine")
+            if not mine.get(author):
+                #0 is depth
+                mine[author][0] = 0
+            if cooldown[author].get(cmd) and time.time() - cooldown.get(author)[cmd] > 60*30:
+                mine[author][0] = 0
+            if 'm' in args:
+                pass
+            elif 'r' in args:
+                pass
+            elif 'l' in args:
+                pass
+            else:
+                embed.description = 'to mine, mine something: left (l) right (r) or middle (m)'
+
+            
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)

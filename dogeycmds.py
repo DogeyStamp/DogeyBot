@@ -7,5 +7,6 @@ cmds = {"help":["get halp for doggo speak!","Bork bork. I need ***help***!!",1,"
         "news":["get the news ~~about doggos~~","bork bork doggo of the lake what ***news*** do you have?",1,"fun"],
         "quote":["get a quote","bork bork booooored, i want a ***quote***",1,"fun"],
         "balance":["get ur dogecoin balance","bork bork money money!!!!! whats me ***balance***",1,"currency"],
-        "inventory":["see ur inventory","bork whats in my inventory?!",1,"currency"]} 
+        "inventory":["see ur inventory","bork whats in my inventory?!",1,"currency"],
+        "mine":["mine for stuff. then sell it for dogecoin! such rich","bork mine",3,"currency"]} 
 categories = ["general","utility","fun","currency"]
