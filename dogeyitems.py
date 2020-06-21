@@ -21,10 +21,10 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("rare","rare dogecoin",-1,400,"valuable. only 10000 were ever produced.","collectable",False),
          Item("old","old dogecoin",-1,300,"dogecoin collectors want it.","collectable",False),
          Item("fossil","fossil",-1,10,"oh look a fishy! such interest.","collectable",False),
-         Item("aoww","aowwsteeng sculpture",3500,4000,"honoring the Aus Aowwsteeng fish","collectable",False)
+         Item("aoww","aowwsteeng sculpture",3500,4000,"honoring the Aus Aowwsteeng fish","collectable",False),
          Item("uranium","uranium",-1,150,"such glow.","ore",False),
          Item("brocolli","brocolli",3,4,"vegetable. such disgust.","collectable",True),
-         Item("amethyst","amethyst",-1,1000,"purple ice??","ore",True)
+         Item("amethyst","amethyst",-1,1000,"purple ice??","ore",True),
          Item("cobalt","cobalt",-1,25,"such blue.","ore",False),
          Item("cat","catter portrait",-1,110,"cats suck. such angry.","collectable",False),
          Item("doge rock","doge rock",-1,100,"its a doge rock.","ore",False),

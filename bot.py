@@ -1,22 +1,25 @@
-print("DogeyBot starting...\nThis program is Doge-Approved, and created by DogeyStamp.")
-import discord
-import markovify
-import random
-import dogeystrings
-import dogeycmds
-import dogeytoken
-import sympy
-import time
 import datetime
-import praw
-import collections
-import asyncio
-import dogeyitems
-import dogeymine
-from math import ceil
-
 def timeStampPrint(toPrint):
     print("[{}] ".format(datetime.datetime.now()) + toPrint)
+timeStampPrint("[INFO] DogeyBot starting... This program is Doge Approved. It is created by DogeyStamp.")
+try:
+    import discord
+    import markovify
+    import random
+    import dogeystrings
+    import dogeycmds
+    import dogeytoken
+    import sympy
+    import time
+    import praw
+    import collections
+    import asyncio
+    import dogeyitems
+    import dogeymine
+    from math import ceil
+except Exception as err:
+    timeStampPrint("[ERR] Import error: {} Aborting...".format(err))
+    exit(-1)
 
 timeStampPrint("[INFO] Imports successful")
 
@@ -278,21 +281,88 @@ async def on_message(message):
             return
         if cmd == "mine":
             args = message.content.lower().replace("bork",'').replace("mine","")
-            embed = discord.Embed(title="{}'s mine")
-            if not mine.get(author):
-                #0 is depth
-                mine[author][0] = 0
-            if cooldown[author].get(cmd) and time.time() - cooldown.get(author)[cmd] > 60*30:
-                mine[author][0] = 0
+            def createCfg(depth):
+                def distribution(d1,d2,depth,peak):
+                    if d1 > depth or d2 < depth:
+                        return 0
+                    center = ceil(abs(d1 + (d1 - d2)/2))
+                    if depth <= center:
+                        return round(peak * ((depth-d1)/(center-d1)))
+                    if depth > center:
+                        return round(peak * (abs(depth-d2)/abs(center-d2)))
+                cfg = ["stone","stone","stone"]
+                #Stone is always default, and gets replaced by other things during the config process
+                #The rest is determined in dogeymine
+                for sit in dogeymine.situations.keys():
+                    if sit == 'stone':
+                        continue
+                    sitob = dogeymine.situations[sit]
+                    remaining = distribution(sitob.d1,sitob.d2,depth,sitob.peak)
+                    remaining = min(remaining,3)
+                    remInds = [0,1,2]
+                    while remaining > 0 and remInds:
+                        remaining -= 1
+                        if random.randint(1,sitob.chance) == 1:
+                            ind = random.choice(remInds)
+                            remInds.remove(ind)
+                            cfg[ind] = sit
+                #this just returns the config, it doesn't perform logic for danger, messages to display, etc.
+                return cfg
+            if (not mine.get(author)) or (cooldown[author].get(cmd) and (time.time() - cooldown.get(author)[cmd] > 60*30)):
+                #current is the configuration of the mine: stone stone lava, or something
+                mine[author] = {"depth":0,"current":[]}
+                cfg = createCfg(mine[author]["depth"])
+                mine[author]['current'] = cfg
+            embed = discord.Embed(title="{}'s mine".format(message.author.name))
+            ind = -1
             if 'm' in args:
-                pass
+                ind = 1
             elif 'r' in args:
-                pass
+                ind = 2
             elif 'l' in args:
-                pass
+                ind = 0
             else:
-                embed.description = 'to mine, mine something: left (l) right (r) or middle (m)'
-
+                embed.description = 'to mine, mine something: left (`l`) right (`r`) or middle (`m`) `bork mine l`, `bork mine r`, `bork mine m`'
+            if ind != -1:
+                currSit = mine[author]['current']
+                sitObj = dogeymine.situations.get(currSit[ind])
+                if not sitObj:
+                    raise Exception("Mining situ not found: {}".format(currSit))
+                if sitObj.dangerous:
+                    def danger():
+                        if sitObj.dangerDist == 0:
+                            mine[author]["depth"] = 0
+                        else:
+                            mine[author]["depth"] = max(0,mine[author]["depth"]-sitObj.dangerDist)
+                        embed.description = sitObj.dangerString
+                    if sitObj.req != '':
+                        if not save[author]['inventory'].get(sitObj.req):
+                            if sitObj.reqDang:
+                                danger()
+                            else:
+                                mine[author]["depth"] += random.randint(1,3)
+                                embed.description = sitObj.reqStr
+                    else:
+                        danger()
+                else:
+                    mine[author]["depth"] += random.randint(1,3)
+                    amount = random.randint(sitObj.r1, sitObj.r2)
+                    embed.description = sitObj.body.format(amount)
+                    if save[author]['inventory'].get(sitObj.reward):
+                        save[author]['inventory'][sitObj.reward] += amount
+                    else:
+                        save[author]['inventory'][sitObj.reward] = amount
+                embed.title = embed.title + "\n{} depth\n{}".format(mine[author]["depth"],sitObj.name)
+                mine[author]['current'] = createCfg(mine[author]["depth"])
+            minePics = []
+            for currSit in mine[author]['current']:
+                sitObj = dogeymine.situations.get(currSit)
+                if not sitObj:
+                    raise Exception("Mining situ not found: {}".format(currSit))
+                minePics.append(sitObj.pic)
+            embed.add_field(name="ur mine",value=' '.join(minePics))
+            await message.channel.send(embed=embed)
+            return
             
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
@@ -306,7 +376,7 @@ async def on_message(message):
         await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
     except Exception as err:
         await message.channel.send("oh noes! I has an error, pls tell dogeystamp")
-        timeStampPrint("[ERROR] {}".format(err))
+        timeStampPrint("[ERR] {}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(err,message.content,message.author.name+"#"+message.author.discriminator,author))
     
 
 client.run(dogeytoken.token)
