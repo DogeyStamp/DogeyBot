@@ -354,7 +354,7 @@ async def on_message(message):
                         quantity = int(quantity)
                     else:
                         quantity = 1
-                    if "max" in message.content.lower():
+                    if "max" in message.content.lower() or "all" in message.content.lower():
                         if save[author]["inventory"].get(item.itemid) and save[author]["inventory"][item.itemid] > 0:
                             quantity = save[author]["inventory"][item.itemid]
                     cost = quantity * item.sellcost
