@@ -22,6 +22,8 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("old","old dogecoin",-1,300,"dogecoin collectors want it.","collectable",False),
          Item("fossil","fossil",-1,3,"oh look a fishy! such interest.","collectable",False),
          Item("bug","ancient bug",-1,1000,"this is scientifically interesting. it definitely won't escape the lab! haha.","collectable",False),
+         Item("bomb","bomb",1000,100,"this is a bomb. it should be safe. right??","item",True),
+         Item("pliers","pliers",500,50,"lets you cut wires. mainly to defuse bomb. very helpful.","item",True),
          Item("aoww","aowwsteeng sculpture",3500,4000,"honoring the Aus Aowwsteeng fish","collectable",False),
          Item("uranium","uranium",-1,150,"such glow.","ore",False),
          Item("broccoli","broccoli",2,1,"vegetable. such disgust.","collectable",True),
