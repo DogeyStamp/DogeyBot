@@ -95,7 +95,7 @@ async def on_message(message):
                     ("shop","shop"),
                     ("sell","sell"),
                     ("halp","help"),
-                    ("time","time"),
+                    ("time","time"),    
                     ("bank","balance"),
                     ("bal","balance"),
                     ("coin","balance"),
@@ -272,14 +272,20 @@ async def on_message(message):
                     await message.channel.send(embed=itemInfo(item))
                     return
             embed = discord.Embed(title="{}'s inventory".format(message.author.name))
-            nItems = len(save[author]["inventory"].keys())
+            items = []
+            for item in save[author]["inventory"].keys():
+                if not item in dogeyitems.itemIds:
+                    timeStampPrint("[WARN] Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                else:
+                    items.append(item)
+            nItems = len(items)
             if nItems == 0:
                 embed.description = 'oof u has no item. such empty.'
                 await message.channel.send(embed=embed)
                 return
             else:
                 embed.description = "{} items. such cool".format(nItems)
-            itemList = [item for item in save[author]["inventory"].keys() if save[author]["inventory"][item] > 0]
+            itemList = [item for item in items if save[author]["inventory"][item] > 0]
             itemPerPage = 12
             totalPages = ceil(len(itemList)/itemPerPage)
             pageNmb = ''.join([i for i in message.content if i.isdigit()])
