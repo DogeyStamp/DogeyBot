@@ -39,6 +39,17 @@ with open("save","r", encoding="utf-8") as saveFile:
 saveFile.close()
 timeStampPrint("[INFO] Data retrieval successful")
 
+def itemInfo(itemObj):
+    embed = discord.Embed()
+    if not itemObj:
+        raise Exception("Invalid item found: {}".format(item))
+    embed.title = itemObj.name
+    if itemObj.inShop:
+        embed.description = "*{}* - ID `{}`\nsells for {} dogecoins.\nbought for {} dogecoins.\n\n**{}**".format(itemObj.itemType,itemObj.itemid,itemObj.sellcost, itemObj.buycost, itemObj.description)
+    else:
+        embed.description = "*{}* - ID `{}`\nsells for {} dogecoins.\ncan not be bought. \n\n**{}**".format(itemObj.itemType,itemObj.itemid,itemObj.sellcost, itemObj.description)
+    return embed
+
 def saveData():
     with open("save","w", encoding="utf-8") as saveFile:
         saveFile.write(str(save))
@@ -95,7 +106,10 @@ async def on_message(message):
                     ("inventory","inventory"),
                     ("inv","inventory"),
                     ("mine","mine"),
-                    ("whats","calculate"),])
+                    ("buy","buy"),
+                    ("shop","shop"),
+                    ("sell","sell"),
+                    ("whats","calculate")])
         cmd = ''
         for i in cmdDict.keys():
             if message.content.lower().find(i) != -1:
@@ -214,13 +228,13 @@ async def on_message(message):
                 extraReward = 1
             elif num >= 9000:
                 level = 5
-                extraReward = 50
+                extraReward = 500
             elif num >= 900:
                 level = 6
-                extraReward = 500
+                extraReward = 5000
             elif num >= 800:
                 level = 7
-                extraReward = 5000
+                extraReward = 50000
             with open("dogeFortune{}.txt".format(level),encoding="utf-8") as f:
                 text = f.read().split("%")
                 extraRewardStr = ''
@@ -252,6 +266,10 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
             return
         if cmd == "inventory":
+            for item in dogeyitems.items:
+                if item.itemid in message.content.lower() and save[author]["inventory"].get(item.itemid) and save[author]["inventory"].get(item.itemid) > 0:
+                    await message.channel.send(embed=itemInfo(item))
+                    return
             embed = discord.Embed(title="{}'s inventory".format(message.author.name))
             nItems = len(save[author]["inventory"].keys())
             if nItems == 0:
@@ -260,7 +278,7 @@ async def on_message(message):
                 return
             else:
                 embed.description = "{} items. such cool".format(nItems)
-            itemList = [item for item in save[author]["inventory"].keys()]
+            itemList = [item for item in save[author]["inventory"].keys() if save[author]["inventory"][item] > 0]
             itemPerPage = 12
             totalPages = ceil(len(itemList)/itemPerPage)
             pageNmb = ''.join([i for i in message.content if i.isdigit()])
@@ -279,6 +297,69 @@ async def on_message(message):
                 embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
             await message.channel.send(embed=embed)
             return
+        if cmd == "shop":
+            for item in dogeyitems.items:
+                if item.itemid in message.content.lower() and item.inShop:
+                    await message.channel.send(embed=itemInfo(item))
+                    return
+            else:
+                embed = discord.Embed(title="doggo shop",description='henlo! pls buy my stuff')
+                itemList = [item for item in dogeyitems.items if item.inShop]
+                itemPerPage = 12
+                totalPages = ceil(len(itemList)/itemPerPage)
+                pageNmb = ''.join([i for i in message.content if i.isdigit()])
+                if bool(pageNmb):
+                    pageNmb = int(pageNmb)-1
+                else:
+                    pageNmb = 0
+                if pageNmb+1>totalPages or pageNmb < 0:
+                    pageNmb = 0
+                embed.set_footer(text="page {} out of {}".format(pageNmb+1,totalPages))
+                for item in itemList[pageNmb*itemPerPage:(pageNmb+1)*itemPerPage]:
+                    embed.add_field(name="{}".format(item.name),value="ID: `{1}` - {0}".format(item.itemType,item.itemid),inline=True)
+                await message.channel.send(embed=embed)
+                return
+        if cmd == "buy":
+            for item in dogeyitems.items:
+                if item.itemid in message.content.lower() and item.inShop:
+                    quantity = ''.join([i for i in message.content if i.isdigit()])
+                    if bool(quantity):
+                        quantity = int(quantity)
+                    else:
+                        quantity = 1
+                    cost = quantity * item.buycost
+                    if save[author]["coins"] - cost >= 0:
+                        embed = discord.Embed(title='bought!',description="bought {} {} for {} dogecoins.".format(quantity, item.name, cost))
+                        save[author]["coins"] -= cost
+                        if save[author]["inventory"].get(item.itemid):
+                            save[author]["inventory"][item.itemid] += quantity
+                        else:
+                            save[author]["inventory"][item.itemid] = quantity
+                        await message.channel.send(embed=embed)
+                    else:
+                        await message.channel.send("aww u not enough money.")
+                    return
+        if cmd == "sell":
+            for item in dogeyitems.items:
+                if item.itemid in message.content.lower():
+                    quantity = ''.join([i for i in message.content if i.isdigit()])
+                    if bool(quantity):
+                        quantity = int(quantity)
+                    else:
+                        quantity = 1
+                    if "max" in message.content.lower():
+                        if save[author]["inventory"].get(item.itemid) and save[author]["inventory"][item.itemid] > 0:
+                            quantity = save[author]["inventory"][item.itemid]
+                    cost = quantity * item.sellcost
+                    if save[author]["inventory"].get(item.itemid):
+                        if save[author]["inventory"][item.itemid] >= quantity:
+                            embed = discord.Embed(title='sold!',description="sold {} {} for {} dogecoins.".format(quantity, item.name, cost))
+                            save[author]["coins"] += cost
+                            save[author]["inventory"][item.itemid] -= quantity
+                            await message.channel.send(embed=embed)
+                        else:
+                            await message.channel.send("aww u not enough {}.".format(item.name))
+                    return
         if cmd == "mine":
             args = message.content.lower().replace("bork",'').replace("mine","")
             def createCfg(depth):
@@ -342,6 +423,14 @@ async def on_message(message):
                             else:
                                 mine[author]["depth"] += random.randint(1,3)
                                 embed.description = sitObj.reqStr
+                        else:
+                            mine[author]["depth"] += random.randint(1,3)
+                            amount = random.randint(sitObj.r1, sitObj.r2)
+                            embed.description = sitObj.body.format(amount)
+                            if save[author]['inventory'].get(sitObj.reward):
+                                save[author]['inventory'][sitObj.reward] += amount
+                            else:
+                                save[author]['inventory'][sitObj.reward] = amount
                     else:
                         danger()
                 else:
