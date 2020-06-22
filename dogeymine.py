@@ -30,7 +30,7 @@ class situation:
         self.dangerDist = dangerDist
 
 situations = {"stone":situation("stone","dig down.",0,0,'coal',0,0,0,0),
-              "brocolli":situation("brocolli","??\n+{} brocolli",1,5,'brocolli',-15,15,3,5,":broccoli:"),
+              "broccoli":situation("broccoli","??\n+{} broccoli",1,5,'broccoli',-15,15,3,5,":broccoli:"),
               "pamphlet":situation("chapstacks soup pamphlet","wow... i see paper. such interest.\n+{} chapstacks soup pamphlet.",1,2,'pamphlet',-15,15,3,5,":newspaper:"),
               "doge rock":situation("doge rock","i found a doge such wow\n+{} doge rock",1,2,'doge rock',-15,15,3,30),
               "cat":situation("catter portrait","such disgust. i hate catter.\n+{} catter portrait",1,2,'cat',-15,15,3,33,":cat:"),
