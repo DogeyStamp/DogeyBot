@@ -24,7 +24,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("bug","ancient bug",-1,1000,"this is scientifically interesting. it definitely won't escape the lab! haha.","collectable",False),
          Item("aoww","aowwsteeng sculpture",3500,4000,"honoring the Aus Aowwsteeng fish","collectable",False),
          Item("uranium","uranium",-1,150,"such glow.","ore",False),
-         Item("broccoli","broccoli",4,3,"vegetable. such disgust.","collectable",True),
+         Item("broccoli","broccoli",2,1,"vegetable. such disgust.","collectable",True),
          Item("amethyst","amethyst",-1,1000,"purple ice??","ore",False),
          Item("cobalt","cobalt",-1,25,"such blue.","ore",False),
          Item("dogium","dogium",-1,2500,"such doge. very cool.","ore",False),
