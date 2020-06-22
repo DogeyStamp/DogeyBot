@@ -32,7 +32,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("dogium","dogium",-1,2500,"such doge. very cool.","ore",False),
          Item("catium","catium",-1,2000,"used for scientific analysis of catters.","ore",False),
          Item("elder","elder rock",-1,5000,"elder rocks are gods. i mean dogs.","ore",False),
-         Item("cat","catter portrait",-1,110,"cats suck. such angry.","collectable",False),
+         Item("cat","catter portrait",-1,35,"cats suck. such angry.","collectable",False),
          Item("doge rock","doge rock",-1,100,"its a doge rock.","ore",False),
          Item("lavasuit","lava suit",10000,3000,"lets you harvest lava without harm","item",True),
          Item("hazmat","hazmat suit",100000,1000,"lets you touch... biohazards.","item",True),
