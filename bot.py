@@ -87,11 +87,15 @@ async def on_message(message):
                 exit(0)
         if random.randint(1,5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
-        cmdDict = collections.OrderedDict([("time","time"),
+        cmdDict = collections.OrderedDict([
                     ("commands","commands"),
                     ("date","time"),
                     ("help","help"),
+                    ("buy","buy"),
+                    ("shop","shop"),
+                    ("sell","sell"),
                     ("halp","help"),
+                    ("time","time"),
                     ("bank","balance"),
                     ("bal","balance"),
                     ("coin","balance"),
@@ -106,9 +110,6 @@ async def on_message(message):
                     ("inventory","inventory"),
                     ("inv","inventory"),
                     ("mine","mine"),
-                    ("buy","buy"),
-                    ("shop","shop"),
-                    ("sell","sell"),
                     ("whats","calculate")])
         cmd = ''
         for i in cmdDict.keys():
