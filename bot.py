@@ -92,6 +92,8 @@ async def on_message(message):
                     ("date","time"),
                     ("help","help"),
                     ("buy","buy"),
+                    ("inventory","inventory"),
+                    ("inv","inventory"),
                     ("shop","shop"),
                     ("sell","sell"),
                     ("halp","help"),
@@ -107,8 +109,6 @@ async def on_message(message):
                     ("quote","quote"),
                     ("calculate","calculate"),
                     ("what's","calculate"),
-                    ("inventory","inventory"),
-                    ("inv","inventory"),
                     ("mine","mine"),
                     ("whats","calculate")])
         cmd = ''
