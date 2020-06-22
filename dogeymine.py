@@ -52,7 +52,8 @@ situations = {"stone":situation("stone","dig down.",0,0,'coal',0,0,0,0),
               "uranium":situation("uranium","u sure thats safe??\n+{} uranium",1,5,'uranium',1400,2000,7,10),
               "amethyst":situation("amethyst","how long have i been in this mine?? purple ice??\n+{} amethyst",1,3,'amethyst',2000,4000,4,20),
               "elder":situation("elder rock","is this uranium?? why it glowing?? levitating rock????\n+{} elder rock",1,1,'elder rock',1000,5000,5,40),
+              "obsidian":situation("obsidian","wow very very hard stuff\n+{} obsidian",1,4,'obsidian',3000,6000,6,2,":white_square_button:", "jackhammer",False,'this is too hard to break. need jackhammer.'),
               "dogium":situation("dogium","wow this is one of the rarest minerals!!\n+{} dogium",1,2,'dogium',3000,5000,4,40),
               "catium":situation("catium","very disgust. necessary for science tho\n+{} dogium",1,1,'catium',4500,5000,3,10,":pouting_cat:","hazmat",True,'',True,"hecc! its catium! poison. ruun. need hazmat suit.\n-600 depth",600),
               "bug":situation("ancient bug","wow interest. old bug. still alive! in core of planet.\n+{} ancient bugger",1,3,'bug',4000,5000,4,10,":microbe:","hazmat",True,'',True,"aaaaaaaaa run run run the hecc is this\n-500 depth",500),
-              "superlava":situation("superlava","",0,0,'lava',0,10000,3,1,":large_orange_diamond:", "",True,'',True,"superlava instantly burns you. aaaaah. go to surface.")}
+              "superlava":situation("superlava","",0,0,'lava',0,15000,3,2,":large_orange_diamond:", "",True,'',True,"superlava instantly burns you. aaaaah. go to surface.")}

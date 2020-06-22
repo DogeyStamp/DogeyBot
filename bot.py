@@ -440,6 +440,27 @@ async def on_message(message):
                                 save[author]['inventory'][sitObj.reward] = amount
                     else:
                         danger()
+                elif sitObj.req != '':
+                    if not save[author]['inventory'].get(sitObj.req):
+                        embed.description = sitObj.reqStr
+                        embed.title = embed.title + "\n{} depth\n{}".format(mine[author]["depth"],sitObj.name)
+                        minePics = []
+                        for currSit in mine[author]['current']:
+                            sitObj = dogeymine.situations.get(currSit)
+                            if not sitObj:
+                                raise Exception("Mining situ not found: {}".format(currSit))
+                            minePics.append(sitObj.pic)
+                        embed.add_field(name="ur mine",value=' '.join(minePics))
+                        await message.channel.send(embed=embed)
+                        return
+                    else:
+                        mine[author]["depth"] += random.randint(1,3)
+                        amount = random.randint(sitObj.r1, sitObj.r2)
+                        embed.description = sitObj.body.format(amount)
+                        if save[author]['inventory'].get(sitObj.reward):
+                            save[author]['inventory'][sitObj.reward] += amount
+                        else:
+                            save[author]['inventory'][sitObj.reward] = amount
                 else:
                     mine[author]["depth"] += random.randint(1,3)
                     amount = random.randint(sitObj.r1, sitObj.r2)

@@ -35,6 +35,8 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("cat","catter portrait",-1,35,"cats suck. such angry.","collectable",False),
          Item("doge rock","doge rock",-1,100,"its a doge rock.","ore",False),
          Item("lavasuit","lava suit",10000,3000,"lets you harvest lava without harm","item",True),
+         Item("jackhammer","jackhammer",70000,3000,"can break very solid minerals.","item",True),
+         Item("obsidian","obsidian",-1,100,"only the most solid mineral","ore",False),
          Item("hazmat","hazmat suit",100000,1000,"lets you touch... biohazards.","item",True),
          Item("pamphlet","chapstacks soup pamphlet",-1,2,"oh wow this is something about... chapstacks soup. such interest. mythical properties?","collectable",False),
          Item("lava","lava orb",-1,50,"wow this is hot please don't touch me","ore",False)]
