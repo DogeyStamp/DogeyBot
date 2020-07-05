@@ -39,7 +39,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("obsidian","obsidian",-1,100,"only the most solid mineral","ore",False),
          Item("hazmat","hazmat suit",100000,1000,"lets you touch... biohazards.","item",True),
          Item("pamphlet","chapstacks soup pamphlet",-1,2,"oh wow this is something about... chapstacks soup. such interest. mythical properties?","collectable",False),
-         Item("lava","lava orb",-1,50,"wow this is hot please don't touch me","ore",False)]
+         Item("lava","lava orb",-1,30,"wow this is hot please don't touch me","ore",False)]
 dic = {}
 itemIds = []
 for item in items:
