@@ -1,7 +1,7 @@
 import datetime
-def timeStampPrint(toPrint):
-    print("[{}] ".format(datetime.datetime.now()) + toPrint)
-timeStampPrint("[INFO] DogeyBot starting... This program is Doge Approved. It is created by DogeyStamp.")
+import logging
+logging.basicConfig(filename='dogeybot.log',format='[%(asctime)s] [%(levelname)s] - %(message)s',level=logging.INFO)
+logging.info("DogeyBot starting... This program is Doge Approved. It is created by DogeyStamp.")
 try:
     import discord
     import markovify
@@ -18,10 +18,10 @@ try:
     import dogeymine
     from math import ceil
 except Exception as err:
-    timeStampPrint("[ERR] Import error: {} Aborting...".format(err))
+    logging.critical("Import error: {} Aborting...".format(err))
     exit(-1)
 
-timeStampPrint("[INFO] Imports successful")
+logging.info("Imports successful")
 
 client = discord.Client()
 
@@ -37,7 +37,7 @@ with open("save","r", encoding="utf-8") as saveFile:
     newSave = saveFile.read()
     save = eval(newSave)
 saveFile.close()
-timeStampPrint("[INFO] Data retrieval successful")
+logging.info("Data retrieval successful")
 
 def itemInfo(itemObj):
     embed = discord.Embed()
@@ -61,10 +61,10 @@ async def saveTask():
             await asyncio.sleep(30)
             saveData()
     except asyncio.CancelledError:
-        timeStampPrint("[INFO] Shutdown of data save task successful.")
+        logging.info("Shutdown of data save task successful.")
 @client.event
 async def on_ready():
-    timeStampPrint('[INFO] Login as {0.user} successful.'.format(client))
+    logging.info('Login as {0.user} successful.'.format(client))
     client.loop.create_task(saveTask())
 @client.event
 async def on_message(message):
@@ -81,9 +81,9 @@ async def on_message(message):
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
-                timeStampPrint("[INFO] Initiating shutdown...")
+                logging.info("Initiating shutdown...")
                 saveData()
-                timeStampPrint("[INFO] Data saved successfully. Exiting...")
+                logging.info("Data saved successfully. Exiting...")
                 exit(0)
         if random.randint(1,5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
@@ -275,7 +275,7 @@ async def on_message(message):
             items = []
             for item in save[author]["inventory"].keys():
                 if not item in dogeyitems.itemIds:
-                    timeStampPrint("[WARN] Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                    logging.warn("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                 else:
                     items.append(item)
             nItems = len(items)
@@ -299,7 +299,7 @@ async def on_message(message):
             for item in itemList[pageNmb*itemPerPage:(pageNmb+1)*itemPerPage]:
                 itemObj = dogeyitems.dic[item]
                 if not item in dogeyitems.itemIds:
-                    timeStampPrint("[WARN] Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                    logging.warn("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                     continue
                 embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
             await message.channel.send(embed=embed)
@@ -493,7 +493,7 @@ async def on_message(message):
         await message.channel.send(' '.join(responseL[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.helpStrs))
     except Exception as err:
         await message.channel.send("oh noes! I has an error, pls tell dogeystamp")
-        timeStampPrint("[ERR] {}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(err,message.content,message.author.name+"#"+message.author.discriminator,author))
+        logging.exception("{}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(err,message.content,message.author.name+"#"+message.author.discriminator,author))
     
 
 client.run(dogeytoken.token)
