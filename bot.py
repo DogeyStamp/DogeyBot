@@ -29,8 +29,6 @@ reddit = praw.Reddit(client_id="E3x53vfG2tSR_A",
                      client_secret="_jioOka6CDeMoFuT49WqMJ4lEmA",
                      user_agent="discord:DogeyBot:v0.1 (by u/DogeyStamp)")
 
-mine = {}
-cooldown = {}
 save = {}
 with open("save","r", encoding="utf-8") as saveFile:
     saveFile.seek(0)
@@ -74,7 +72,7 @@ async def on_message(message):
             return
         if not save.get(author):
             save[author] = {}
-        saveDefaults = {"coins":0,"inventory":{}}
+        saveDefaults = {"coins":0,"inventory":{},"cooldown":{},"mine":{}}
         for default in saveDefaults.keys():
             if not save[author].get(default):
                 save[author][default] = saveDefaults[default]
@@ -117,15 +115,11 @@ async def on_message(message):
                 cmd = cmdDict[i]
                 break
         if cmd:
-            if cooldown.get(author):
-                if cooldown[author].get(cmd) and time.time() - cooldown.get(author)[cmd] < dogeycmds.cmds[cmd][2]:
-                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(dogeycmds.cmds[cmd][2]-round(time.time() - cooldown[author][cmd],2),2)))
-                    return
-                else:
-                    cooldown[author][cmd] = time.time()
+            if save[author]["cooldown"].get(cmd) and time.time() - save[author]["cooldown"][cmd] < dogeycmds.cmds[cmd][2]:
+                await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(dogeycmds.cmds[cmd][2]-round(time.time() - save[author]["cooldown"][cmd],2),2)))
+                return
             else:
-                cooldown[author] = {}
-                cooldown[author][cmd] = time.time()
+                save[author]["cooldown"][cmd] = time.time()
         if cmd == 'time':
             await message.channel.send(datetime.datetime.now())
             return
@@ -396,11 +390,11 @@ async def on_message(message):
                             cfg[ind] = sit
                 #this just returns the config, it doesn't perform logic for danger, messages to display, etc.
                 return cfg
-            if (not mine.get(author)) or (cooldown[author].get(cmd) and (time.time() - cooldown.get(author)[cmd] > 60*30)):
+            if (not save[author]["mine"]) or (save[author]["cooldown"].get(cmd) and (time.time() - save[author]["cooldown"][cmd] > 60*30)):
                 #current is the configuration of the mine: stone stone lava, or something
-                mine[author] = {"depth":0,"current":[]}
-                cfg = createCfg(mine[author]["depth"])
-                mine[author]['current'] = cfg
+                save[author]["mine"] = {"depth":0,"current":[]}
+                cfg = createCfg(save[author]["mine"]["depth"])
+                save[author]["mine"]['current'] = cfg
             embed = discord.Embed(title="{}'s mine".format(message.author.name))
             ind = -1
             if 'm' in args:
@@ -412,26 +406,26 @@ async def on_message(message):
             else:
                 embed.description = 'to mine, mine something: left (`l`) right (`r`) or middle (`m`) `bork mine l`, `bork mine r`, `bork mine m`'
             if ind != -1:
-                currSit = mine[author]['current']
+                currSit = save[author]["mine"]['current']
                 sitObj = dogeymine.situations.get(currSit[ind])
                 if not sitObj:
                     raise Exception("Mining situ not found: {}".format(currSit))
                 if sitObj.dangerous:
                     def danger():
                         if sitObj.dangerDist == 0:
-                            mine[author]["depth"] = 0
+                            save[author]["mine"]["depth"] = 0
                         else:
-                            mine[author]["depth"] = max(0,mine[author]["depth"]-sitObj.dangerDist)
+                            save[author]["mine"]["depth"] = max(0,save[author]["mine"]["depth"]-sitObj.dangerDist)
                         embed.description = sitObj.dangerString
                     if sitObj.req != '':
                         if not save[author]['inventory'].get(sitObj.req):
                             if sitObj.reqDang:
                                 danger()
                             else:
-                                mine[author]["depth"] += random.randint(1,3)
+                                save[author]["mine"]["depth"] += random.randint(1,3)
                                 embed.description = sitObj.reqStr
                         else:
-                            mine[author]["depth"] += random.randint(1,3)
+                            save[author]["mine"]["depth"] += random.randint(1,3)
                             amount = random.randint(sitObj.r1, sitObj.r2)
                             embed.description = sitObj.body.format(amount)
                             if save[author]['inventory'].get(sitObj.reward):
@@ -443,9 +437,9 @@ async def on_message(message):
                 elif sitObj.req != '':
                     if not save[author]['inventory'].get(sitObj.req):
                         embed.description = sitObj.reqStr
-                        embed.title = embed.title + "\n{} depth\n{}".format(mine[author]["depth"],sitObj.name)
+                        embed.title = embed.title + "\n{} depth\n{}".format(save[author]["mine"]["depth"],sitObj.name)
                         minePics = []
-                        for currSit in mine[author]['current']:
+                        for currSit in save[author]["mine"]['current']:
                             sitObj = dogeymine.situations.get(currSit)
                             if not sitObj:
                                 raise Exception("Mining situ not found: {}".format(currSit))
@@ -454,7 +448,7 @@ async def on_message(message):
                         await message.channel.send(embed=embed)
                         return
                     else:
-                        mine[author]["depth"] += random.randint(1,3)
+                        save[author]["mine"]["depth"] += random.randint(1,3)
                         amount = random.randint(sitObj.r1, sitObj.r2)
                         embed.description = sitObj.body.format(amount)
                         if save[author]['inventory'].get(sitObj.reward):
@@ -462,17 +456,17 @@ async def on_message(message):
                         else:
                             save[author]['inventory'][sitObj.reward] = amount
                 else:
-                    mine[author]["depth"] += random.randint(1,3)
+                    save[author]["mine"]["depth"] += random.randint(1,3)
                     amount = random.randint(sitObj.r1, sitObj.r2)
                     embed.description = sitObj.body.format(amount)
                     if save[author]['inventory'].get(sitObj.reward):
                         save[author]['inventory'][sitObj.reward] += amount
                     else:
                         save[author]['inventory'][sitObj.reward] = amount
-                embed.title = embed.title + "\n{} depth\n{}".format(mine[author]["depth"],sitObj.name)
-                mine[author]['current'] = createCfg(mine[author]["depth"])
+                embed.title = embed.title + "\n{} depth\n{}".format(save[author]["mine"]["depth"],sitObj.name)
+                save[author]["mine"]['current'] = createCfg(save[author]["mine"]["depth"])
             minePics = []
-            for currSit in mine[author]['current']:
+            for currSit in save[author]["mine"]['current']:
                 sitObj = dogeymine.situations.get(currSit)
                 if not sitObj:
                     raise Exception("Mining situ not found: {}".format(currSit))
