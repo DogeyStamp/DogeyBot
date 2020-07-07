@@ -40,7 +40,7 @@ logging.info("Data retrieval successful")
 def itemInfo(itemObj):
     embed = discord.Embed()
     if not itemObj:
-        raise Exception("Invalid item found: {}".format(item))
+        raise Exception("Attempted to get info for blank item.")
     embed.title = itemObj.name
     if itemObj.inShop:
         embed.description = "*{}* - ID `{}`\nsells for {} dogecoins.\nbought for {} dogecoins.\n\n**{}**".format(itemObj.itemType,itemObj.itemid,itemObj.sellcost, itemObj.buycost, itemObj.description)
@@ -269,7 +269,7 @@ async def on_message(message):
             items = []
             for item in save[author]["inventory"].keys():
                 if not item in dogeyitems.itemIds:
-                    logging.warn("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                    logging.warning("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                 else:
                     items.append(item)
             nItems = len(items)
@@ -293,7 +293,7 @@ async def on_message(message):
             for item in itemList[pageNmb*itemPerPage:(pageNmb+1)*itemPerPage]:
                 itemObj = dogeyitems.dic[item]
                 if not item in dogeyitems.itemIds:
-                    logging.warn("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
+                    logging.warning("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                     continue
                 embed.add_field(name="{} - {}".format(itemObj.name,save[author]["inventory"][item]),value="ID: `{1}` - {0}".format(itemObj.itemType,itemObj.itemid),inline=True)
             await message.channel.send(embed=embed)
