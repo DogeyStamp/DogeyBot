@@ -76,6 +76,9 @@ async def on_message(message):
         for default in saveDefaults.keys():
             if not save[author].get(default):
                 save[author][default] = saveDefaults[default]
+        if not save[author].get("joined"):
+            #Author's first use of the bot
+            save[author]["joined"] = time.time()
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
