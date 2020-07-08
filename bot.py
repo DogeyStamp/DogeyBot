@@ -16,7 +16,7 @@ try:
     import asyncio
     import dogeyitems
     import dogeymine
-    from math import ceil
+    from math import ceil, floor, log
 except Exception as err:
     logging.critical("Import error: {} Aborting...".format(err))
     exit(-1)
@@ -53,6 +53,11 @@ def saveData():
         saveFile.write(str(save))
         saveFile.close()
 
+def orderOfMagnitude(number):
+    if number == 0:
+        return 0
+    return floor(log(number, 10))
+
 async def saveTask():
     try:
         while(True):
@@ -88,6 +93,10 @@ async def on_message(message):
                 saveData()
                 logging.info("Data saved successfully. Exiting...")
                 exit(0)
+        if "cooldown" in message.content:
+            if author == 437654201863241740:
+                save[437654201863241740]["cooldown"] = {}
+                await message.channel.send("cooldown removed")
         if random.randint(1,5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
         cmdDict = collections.OrderedDict([
@@ -95,6 +104,8 @@ async def on_message(message):
                     ("date","time"),
                     ("help","help"),
                     ("buy","buy"),
+                    ("share","share"),
+                    ("gift","gift"),
                     ("inventory","inventory"),
                     ("inv","inventory"),
                     ("shop","shop"),
@@ -111,8 +122,6 @@ async def on_message(message):
                     ("news","news"),
                     ("quote","quote"),
                     ("calculate","calculate"),
-                    ("share","share"),
-                    ("gift","gift"),
                     ("what's","calculate"),
                     ("mine","mine"),
                     ("whats","calculate")])
@@ -275,7 +284,7 @@ async def on_message(message):
                     await message.channel.send("u brok :(")
             else:
                 embed=discord.Embed()
-                embed.add_field(name="{}'s balance".format(balName), value=random.choice(dogeystrings.balStrs).format(save[balUser.id]["coins"]), inline=False)
+                embed.add_field(name="{}'s balance".format(balName), value=random.choice(dogeystrings.balStrs).format(str(save[balUser.id]["coins"])), inline=False)
                 await message.channel.send(embed=embed)
             return
         if cmd == "inventory":
@@ -382,8 +391,12 @@ async def on_message(message):
             #Knockoff sell code
             if len(message.mentions) > 0:
                 giftUser = message.mentions[0]
-                giftName = message.mentions[0].name
                 createSave(giftUser.id)
+                giftName = message.mentions[0].name
+                if not save[giftUser.id].get("joined") or time.time() -  save[giftUser.id]["joined"] < 60*60*24*7:
+                    await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
+                    save[author]["cooldown"]["gift"] = 0
+                    return
             else:
                 await message.channel.send("who this gift for??")
                 save[author]["cooldown"]["gift"] = 0
@@ -422,6 +435,55 @@ async def on_message(message):
                     return
             else:
                 save[author]["cooldown"]["gift"] = 0
+        if cmd == "share":
+            def receivelimit(x):
+                return 10**orderOfMagnitude(x)+2
+            #Knockoff gift code
+            if len(message.mentions) > 0:
+                shareUser = message.mentions[0]
+                createSave(shareUser.id)
+                shareName = message.mentions[0].name
+                if not save[shareUser.id].get("joined") or time.time() -  save[shareUser.id]["joined"] < 60*60*24*7:
+                    await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
+                    save[author]["cooldown"]["share"] = 0
+                    return
+                cleanedMessage = message.content.replace(shareUser.mention[2:],"")
+            else:
+                await message.channel.send("who this money for??")
+                save[author]["cooldown"]["share"] = 0
+                return
+            quantity = ''.join([i for i in cleanedMessage if i.isdigit()])
+            limit = min(receivelimit(save[shareUser.id]["coins"]),save[author]["coins"])
+            if bool(quantity):
+                quantity = int(quantity)
+            else:
+                await message.channel.send("how much dogecoin tho??")
+                save[author]["cooldown"]["share"] = 0
+                return
+            if time.time() - save[author]["joined"] < 60*60*24*7:
+                await message.channel.send("hey u need to wait few days so me can tell ur not a new doggo here thx")
+                save[author]["cooldown"]["share"] = 0
+                return
+            if quantity <= limit:
+                if save[author]["coins"] == 0:
+                    tax = 0
+                else:
+                    tax = min(orderOfMagnitude(save[author]["coins"])*0.08,0.99999999)
+                oldQuantity = quantity
+                quantity -= tax
+                quantity = round(quantity)
+                save[author]["coins"] -= quantity
+                save[shareUser.id]["coins"] += quantity
+                if quantity == oldQuantity:
+                    embed = discord.Embed(title='given!',description="gave {} dogecoins to {}. there was a tax of {}, but we rounded your money amount.".format(quantity, shareName,tax))
+                else:
+                    embed = discord.Embed(title='given!',description="gave {} dogecoins to {}. there was a tax of {}.".format(quantity, shareName,tax))
+                await message.channel.send(embed=embed)
+                return
+            else:
+                await message.channel.send("aww u cant send that much money u can only send {}".format(limit))
+                save[author]["cooldown"]["share"] = 0
+                return
         if cmd == "mine":
             args = message.content.lower().replace("bork",'').replace("mine","")
             def createCfg(depth):
