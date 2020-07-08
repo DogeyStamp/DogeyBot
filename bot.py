@@ -70,15 +70,17 @@ async def on_message(message):
         author = message.author.id
         if message.author == client.user or message.content.lower()[:4] != "bork":
             return
-        if not save.get(author):
-            save[author] = {}
-        saveDefaults = {"coins":0,"inventory":{},"cooldown":{},"mine":{}}
-        for default in saveDefaults.keys():
-            if not save[author].get(default):
-                save[author][default] = saveDefaults[default]
-        if not save[author].get("joined"):
-            #Author's first use of the bot
-            save[author]["joined"] = time.time()
+        def createSave(person,isAuthor=False):
+            if not save.get(person):
+                save[person] = {}
+            saveDefaults = {"coins":0,"inventory":{},"cooldown":{},"mine":{}}
+            for default in saveDefaults.keys():
+                if not save[person].get(default):
+                    save[person][default] = saveDefaults[default]
+            if (not save[person].get("joined")) and isAuthor:
+                #Author's first use of the bot
+                save[person]["joined"] = time.time()
+        createSave(author,True)
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
@@ -109,6 +111,8 @@ async def on_message(message):
                     ("news","news"),
                     ("quote","quote"),
                     ("calculate","calculate"),
+                    ("share","share"),
+                    ("gift","gift"),
                     ("what's","calculate"),
                     ("mine","mine"),
                     ("whats","calculate")])
@@ -119,8 +123,19 @@ async def on_message(message):
                 break
         if cmd:
             if save[author]["cooldown"].get(cmd) and time.time() - save[author]["cooldown"][cmd] < dogeycmds.cmds[cmd][2]:
-                await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(dogeycmds.cmds[cmd][2]-round(time.time() - save[author]["cooldown"][cmd],2),2)))
-                return
+                cooldownSeconds = dogeycmds.cmds[cmd][2]-round(time.time() - save[author]["cooldown"][cmd],2)
+                if cooldownSeconds//(60*60*24):
+                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(cooldownSeconds/(60*60*24),2),"day"))
+                    return
+                elif cooldownSeconds//(60*60):
+                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(cooldownSeconds/(60*60),2),"hour"))
+                    return
+                elif cooldownSeconds//60:
+                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(cooldownSeconds/60,2),"min"))
+                    return
+                else:
+                    await message.channel.send("> " + random.choice(dogeystrings.coolStrs).format(round(cooldownSeconds,2),"sec"))
+                    return
             else:
                 save[author]["cooldown"][cmd] = time.time()
         if cmd == 'time':
@@ -275,14 +290,13 @@ async def on_message(message):
                     logging.warning("Invalid item {} found in {}'s inventory, ID {}".format(item,message.author.name,author))
                 else:
                     items.append(item)
-            nItems = len(items)
-            if nItems == 0:
+            itemList = [item for item in items if save[author]["inventory"][item] > 0]
+            if len(itemList) == 0:
                 embed.description = 'oof u has no item. such empty.'
                 await message.channel.send(embed=embed)
                 return
             else:
-                embed.description = "{} items. such cool".format(nItems)
-            itemList = [item for item in items if save[author]["inventory"][item] > 0]
+                embed.description = "{} items. such cool".format(len(itemList))
             itemPerPage = 12
             totalPages = ceil(len(itemList)/itemPerPage)
             pageNmb = ''.join([i for i in message.content if i.isdigit()])
@@ -364,6 +378,50 @@ async def on_message(message):
                         else:
                             await message.channel.send("aww u not enough {}.".format(item.name))
                     return
+        if cmd == "gift":
+            #Knockoff sell code
+            if len(message.mentions) > 0:
+                giftUser = message.mentions[0]
+                giftName = message.mentions[0].name
+                createSave(giftUser.id)
+            else:
+                await message.channel.send("who this gift for??")
+                save[author]["cooldown"]["gift"] = 0
+                return
+            if time.time() - save[author]["joined"] < 60*60*24*7:
+                await message.channel.send("hey u need to wait few days so me can tell ur not a new doggo here thx")
+                save[author]["cooldown"]["gift"] = 0
+                return
+            cleanedMessage = message.content.replace(giftUser.mention[2:],"")
+            for item in dogeyitems.items:
+                if item.itemid in message.content.lower():
+                    quantity = ''.join([i for i in cleanedMessage if i.isdigit()])
+                    if bool(quantity):
+                        quantity = int(quantity)
+                    else:
+                        quantity = 1
+                    if "max" in message.content.lower() or "all" in message.content.lower():
+                        if save[author]["inventory"].get(item.itemid) and save[author]["inventory"][item.itemid] > 0:
+                            quantity = min(save[author]["inventory"][item.itemid],item.giftLimit)
+                    if save[author]["inventory"].get(item.itemid):
+                        if quantity > item.giftLimit:
+                            await message.channel.send("wow. such amount! too much. limit for {} is {}.".format(item.name,item.giftLimit))
+                            save[author]["cooldown"]["gift"] = 0
+                        elif save[author]["inventory"][item.itemid] >= quantity:
+                            embed = discord.Embed(title='given!',description="gave {} {} to {}. what a deal!".format(quantity, item.name, giftName))
+                            save[author]["inventory"][item.itemid] -= quantity
+                            if not save[giftUser.id]["inventory"].get(item.itemid):
+                                save[giftUser.id]["inventory"][item.itemid] = quantity
+                            else:
+                                save[giftUser.id]["inventory"][item.itemid] += quantity
+                            await message.channel.send(embed=embed)
+                            return
+                        else:
+                            await message.channel.send("aww u not enough {}.".format(item.name))
+                            save[author]["cooldown"]["gift"] = 0
+                    return
+            else:
+                save[author]["cooldown"]["gift"] = 0
         if cmd == "mine":
             args = message.content.lower().replace("bork",'').replace("mine","")
             def createCfg(depth):

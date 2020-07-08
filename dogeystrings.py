@@ -13,12 +13,12 @@ postStrs =  ["here is ur rebit post",
             "wow such entertainment",
             "bork bork here is rebbit post",
             "rebbit is cool"]
-coolStrs =  ["stap u too fast {} sec pls",
-            "{} sec u bork too fast",
-            "such fast. such annoying. pls wait {} sec ok??",
-            "wow pls wait {} sec",
-            "bork bork BORK!! u too fast {} sec",
-            "pls wait {} sec k??"]
+coolStrs =  ["stap u too fast {} {} pls",
+            "{} {} u bork too fast",
+            "such fast. such annoying. pls wait {} {} ok??",
+            "wow pls wait {} {}",
+            "bork bork BORK!! u too fast {} {}",
+            "pls wait {} {} k??"]
 balStrs = ["has {} dogecoins",
             "wow {} doggocoins",
             "da balance: {} dogecoin!!",
