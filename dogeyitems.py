@@ -1,13 +1,13 @@
 class Item:
-    def __init__(self, itemid, name='',buycost=-1,sellcost=-1,description='',itemType='item',inShop=True,giftLimit=1):
+    def __init__(self, item_id, name='',buy_cost=-1,sell_cost=-1,description='',item_type='item',in_shop=True,gift_limit=1):
         self.name = name
-        self.itemid = itemid
-        self.buycost = buycost
-        self.sellcost = sellcost
+        self.item_id = item_id
+        self.buy_cost = buy_cost
+        self.sell_cost = sell_cost
         self.description = description
-        self.itemType = itemType
-        self.inShop = inShop
-        self.giftLimit = giftLimit
+        self.item_type = item_type
+        self.in_shop = in_shop
+        self.gift_limit = gift_limit
 items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory. such interest.","collectable",False,0),
          Item("beta","test badge beta",-1,-1,"test item to test the inventory. such interest.","collectable",False,1),
          Item("coal","coal",-1,1,"dark powdery rock. such flammable!","ore",False,100),
@@ -42,7 +42,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("pamphlet","chapstacks soup pamphlet",-1,2,"oh wow this is something about... chapstacks soup. such interest. mythical properties?","collectable",False,100),
          Item("lava","lava orb",-1,30,"wow this is hot please don't touch me","ore",False,7)]
 dic = {}
-itemIds = []
+item_ids = []
 for item in items:
-    itemIds.append(item.itemid)
-    dic[item.itemid] = item
+    item_ids.append(item.item_id)
+    dic[item.item_id] = item

@@ -1,25 +1,25 @@
-helpStrs =  ["if u want halp say bork bork i want help or something similar",
+help_strs =  ["if u want halp say bork bork i want help or something similar",
             "bork bork need help? say bork bork halp",
             "bork bork need halp? say bork bork help",
             "for help with talking to me, say bork help",
             "need halp? say bork halp me pls",
             "for halp say bork bork pls gib halp"]
-helpPrompt = '''henlo! i am DogeyBot.
+help_prompt = '''henlo! i am DogeyBot.
 i am good doggo. to talk to me, say bork. u can talk naturally, like "Bork bork I want help". for a list of commands, say "bork i want list of commands" or "bork bork what are the commands?!"
 if u want help for an individual command, say "bork commands [command]"'''
-postStrs =  ["here is ur rebit post",
+post_strs =  ["here is ur rebit post",
             "i like rebbit",
             "reddet posts? wow such cool",
             "wow such entertainment",
             "bork bork here is rebbit post",
             "rebbit is cool"]
-coolStrs =  ["stap u too fast {} {} pls",
+cool_strs =  ["stap u too fast {} {} pls",
             "{} {} u bork too fast",
             "such fast. such annoying. pls wait {} {} ok??",
             "wow pls wait {} {}",
             "bork bork BORK!! u too fast {} {}",
             "pls wait {} {} k??"]
-balStrs = ["has {} dogecoins",
+bal_strs = ["has {} dogecoins",
             "wow {} doggocoins",
             "da balance: {} dogecoin!!",
             "{} dogecoins!!",
