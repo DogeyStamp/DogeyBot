@@ -7,4 +7,4 @@ People were really sad when I pulled the plug on DogeyBot before this one. (Who 
 ## Installation
 
 - `git clone https://github.com/DogeyStamp/DogeyBot/`
-- Add the Discord bot token to dogeytoken.py using your favourite text editor and the [Discord Developper Portal](https://discord.com/developers/)
+- Add the Discord bot token to dogeytoken.py using your favourite text editor and the [Discord Developer Portal](https://discord.com/developers/)
