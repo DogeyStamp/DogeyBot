@@ -16,6 +16,7 @@ import dogeycmds
 import dogeytoken
 import dogeyitems
 import dogeymine
+import dogeysteal
 
 logging.basicConfig(filename='dogeybot.log',
                     format='[%(asctime)s] [%(levelname)s] - %(message)s',
@@ -45,9 +46,7 @@ def item_info(item_obj):
     embed.title = item_obj.name
     if item_obj.in_shop:
         embed.description = \
-            "*{}* - ID `{}`\n\
-            sells for {} dogecoins.\n\
-            bought for {} dogecoins.\n\n**{}**"\
+            "*{}* - ID `{}`\nsells for {} dogecoins.\nbought for {} dogecoins.\n\n**{}**"\
             .format(
                 item_obj.item_type,
                 item_obj.item_id,
@@ -56,9 +55,7 @@ def item_info(item_obj):
                 item_obj.description)
     else:
         embed.description = \
-            "*{}* - ID `{}`\n\
-            sells for {} dogecoins.\n\
-            can not be bought. \n\n**{}**"\
+            "*{}* - ID `{}`\nsells for {} dogecoins.\ncan not be bought. \n\n**{}**"\
             .format(
                 item_obj.item_type,
                 item_obj.item_id,
@@ -116,8 +113,7 @@ async def on_message(message):
         create_save(author,True)
         if "shutdown" in message.content:
             if author == 437654201863241740:
-                await message.channel.send("initiating shutdown becuz\
-                                            i am good doggo")
+                await message.channel.send("initiating shutdown becuz i am good doggo")
                 logging.info("Initiating shutdown...")
                 save_data()
                 logging.info("Data saved successfully. Exiting...")
@@ -153,7 +149,9 @@ async def on_message(message):
                     ("calculate","calculate"),
                     ("what's","calculate"),
                     ("mine","mine"),
-                    ("whats","calculate")])
+                    ("whats","calculate"),
+                    ("rob","steal"),
+                    ("steal","steal")])
         cmd = ''
         for i in cmd_dict.keys():
             if message.content.lower().find(i) != -1:
@@ -384,8 +382,7 @@ async def on_message(message):
             items = []
             for item in save[author]["inventory"].keys():
                 if not item in dogeyitems.item_ids:
-                    logging.warning("Invalid item {} found in {}'s \
-                                     inventory, ID {}"
+                    logging.warning("Invalid item {} found in {}'s inventory, ID {}"
                                     .format(item,message.author.name,author))
                 else:
                     items.append(item)
@@ -409,8 +406,7 @@ async def on_message(message):
             for item in item_list[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
                 item_obj = dogeyitems.dic[item]
                 if not item in dogeyitems.item_ids:
-                    logging.warning("Invalid item {} found in {}'s \
-                                     inventory, ID {}"
+                    logging.warning("Invalid item {} found in {}'s inventory, ID {}"
                                      .format(item,message.author.name,author))
                     continue
                 embed.add_field(
@@ -508,8 +504,7 @@ async def on_message(message):
                 gift_name = message.mentions[0].name
                 if (not save[gift_user.id].get("joined") or
                     time.time() -  save[gift_user.id]["joined"] < 60*60*24*7):
-                    await message.channel.send("hey hey no gib stuff to newb. \
-                                                very bad hooman.")
+                    await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
                     save[author]["cooldown"]["gift"] = 0
                     return
             else:
@@ -518,8 +513,7 @@ async def on_message(message):
                 return
             if time.time() - save[author]["joined"] < 60*60*24*7:
                 await message.channel.send(
-                    "hey u need to wait few days so \
-                     me can tell ur not a new doggo here thx")
+                    "hey u need to wait few days so me can tell ur not a new doggo here thx")
                 save[author]["cooldown"]["gift"] = 0
                 return
             cleaned_message = message.content.replace(gift_user.mention[2:],"")
@@ -575,8 +569,7 @@ async def on_message(message):
                 share_name = message.mentions[0].name
                 if (not save[share_user.id].get("joined") or
                     time.time() -  save[share_user.id]["joined"] < 60*60*24*7):
-                    await message.channel.send("hey hey no gib stuff to newb. \
-                                                very bad hooman.")
+                    await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
                     save[author]["cooldown"]["share"] = 0
                     return
                 cleaned_message = message.content.replace(
@@ -596,9 +589,7 @@ async def on_message(message):
                 save[author]["cooldown"]["share"] = 0
                 return
             if time.time() - save[author]["joined"] < 60*60*24*7:
-                await message.channel.send("hey u need to wait few days \
-                                            so me can tell ur not a new \
-                                            doggo here thx")
+                await message.channel.send("hey u need to wait few days so me can tell ur not a new doggo here thx")
                 save[author]["cooldown"]["share"] = 0
                 return
             if quantity <= limit:
@@ -616,21 +607,17 @@ async def on_message(message):
                 if quantity == old_quantity:
                     embed = discord.Embed(
                         title='given!',
-                        description="gave {} dogecoins to {}. \
-                            there was a tax of {}, \
-                            but we rounded your money amount."\
+                        description="gave {} dogecoins to {}. there was a tax of {}, but we rounded your money amount."\
                             .format(quantity, share_name,tax))
                 else:
                     embed = discord.Embed(
                         title='given!',
-                        description="gave {} dogecoins to {}. \
-                            there was a tax of {}."\
+                        description="gave {} dogecoins to {}. there was a tax of {}."\
                             .format(quantity, share_name,tax))
                 await message.channel.send(embed=embed)
                 return
             else:
-                await message.channel.send("aww u cant send that much money \
-                    u can only send {}".format(limit))
+                await message.channel.send("aww u cant send that much money u can only send {}".format(limit))
                 save[author]["cooldown"]["share"] = 0
                 return
         if cmd == "mine":
@@ -683,9 +670,7 @@ async def on_message(message):
             elif 'l' in args:
                 ind = 0
             else:
-                embed.description = 'to mine, mine something: left (`l`) \
-                    right (`r`) or middle (`m`) `bork mine l`, \
-                    `bork mine r`, `bork mine m`'
+                embed.description = 'to mine, mine something: left (`l`) right (`r`) or middle (`m`) `bork mine l`, bork mine r`, `bork mine m`'
             if ind != -1:
                 curr_sit = save[author]["mine"]['current']
                 sit_obj = dogeymine.situations.get(curr_sit[ind])
@@ -763,7 +748,78 @@ async def on_message(message):
             embed.add_field(name="ur mine",value=' '.join(mine_pics))
             await message.channel.send(embed=embed)
             return
-            
+        if cmd == "steal":
+            output = ""
+            if len(message.mentions) > 0:
+                steal_user = message.mentions[0]
+                create_save(steal_user.id)
+                steal_name = message.mentions[0].name
+                if save[author]["coins"] < 500:
+                    await message.channel.send("aww u shouldn't rob them until you have 500 coin")
+                    save[author]["cooldown"]["steal"] = 0
+                    return
+                if save[steal_user.id]["coins"] < 500:
+                    await message.channel.send("u shouldn't rob {}, they only have {} coins"\
+                        .format(steal_name, save[steal_user.id]["coins"]))
+                    save[author]["cooldown"]["steal"] = 0
+                    return
+            else:
+                await message.channel.send("who u rob tho?")
+                save[author]["cooldown"]["steal"] = 0
+                return
+            for steal_check in dogeysteal.steal_checks:
+                offense_amount = random.randint(
+                    steal_check.offense_min,
+                    steal_check.offense_max)
+                if (not save[steal_user.id]["inventory"].get(steal_check.defense_item) or
+                    save[steal_user.id]["inventory"].get(steal_check.defense_item)<=0):
+                    continue
+                if (not save[author]["inventory"].get(steal_check.offense_item) or
+                    save[author]["inventory"].get(steal_check.offense_item)<=0):
+                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
+                    output = output + "\n" + (steal_check.no_item+
+                        "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
+                    save[author]["coins"] -= fine
+                    break
+                elif (save[author]["inventory"][steal_check.offense_item] <
+                    offense_amount):
+                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
+                    output = output + "\n" +  (steal_check.not_enough
+                        .format(save[author]["inventory"][steal_check.offense_item])+
+                        "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
+                    save[author]["coins"] -= fine
+                    break
+                else:
+                    output = output + "\n" + (":tada: "+steal_check.success
+                            .format(offense_amount))
+                if steal_check.consume:
+                    consumed = min(
+                        save[author]["inventory"][steal_check.offense_item],
+                        offense_amount
+                    )
+                    save[author]["inventory"][steal_check.offense_item] -= consumed
+                    output = output + "\n" + ":boom: u broke {} {}".format(consumed,steal_check.offense_item)
+                if steal_check.defense_consume:
+                    save[steal_user.id]["inventory"][steal_check.defense_item] -= 1
+                    output = output + "\n" + ":boom: u broke {}'s {}".format(steal_name,steal_check.defense_item)
+            else:
+                if random.randint(1,2) == 1:
+                    reward = round(save[steal_user.id]["coins"]*(random.randint(6,7)/10))
+                    output = output + ("\n:moneybag: wow u stole ***{}*** dogecoin from {}".format(
+                        reward, steal_name
+                    ))
+                    save[steal_user.id]["coins"] -= reward
+                    save[author]["coins"] += reward
+                else:
+                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
+                    output = output + ("\n:police_officer: o no u got arrested after breaking in to the money.\n:money_with_wings: ***{}*** dogecoin fine".format(
+                        fine
+                    ))
+                    save[author]["coins"] -= fine
+            await message.channel.send(output)
+            return
+
+                
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
