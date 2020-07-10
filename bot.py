@@ -10,6 +10,7 @@ import discord
 import markovify
 import sympy
 import praw
+from aioconsole.stream import ainput
 
 import dogeystrings
 import dogeycmds
@@ -83,10 +84,27 @@ async def save_task():
             save_data()
     except asyncio.CancelledError:
         logging.info("Shutdown of data save task successful.")
+
+async def py_console():
+    while True:
+        cmd = await ainput(">>> ")
+        print()
+        try:
+            exec(cmd)
+        except Exception as err:
+            print(err)
+        print()
+def close_bot():
+    logging.info("Initiating shutdown...")
+    save_data()
+    logging.info("Data saved successfully. Exiting...")
+    exit(0)
+
 @client.event
 async def on_ready():
     logging.info('Login as {0.user} successful.'.format(client))
     client.loop.create_task(save_task())
+    client.loop.create_task(py_console())
 @client.event
 async def on_message(message):
     try:
@@ -114,10 +132,7 @@ async def on_message(message):
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
-                logging.info("Initiating shutdown...")
-                save_data()
-                logging.info("Data saved successfully. Exiting...")
-                exit(0)
+                close_bot()
         if "cooldown" in message.content:
             if author == 437654201863241740:
                 save[437654201863241740]["cooldown"] = {}
@@ -833,6 +848,6 @@ async def on_message(message):
     except Exception as err:
         await message.channel.send("oh noes! I has an error, pls tell dogeystamp")
         logging.exception("{}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(err,message.content,message.author.name+"#"+message.author.discriminator,author))
-    
+print("\n\nThis is a Doge Approved program.\n______________________________\n\nDogeyBot Debug Console\n")
 
 client.run(dogeytoken.token)
