@@ -23,7 +23,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("old","old dogecoin",-1,70,"dogecoin collectors want it.","collectable",False,5),
          Item("fossil","fossil",-1,3,"oh look a fishy! such interest.","collectable",False,100),
          Item("bug","ancient bug",-1,1000,"this is scientifically interesting. it definitely won't escape the lab! haha.","collectable",False,1),
-         Item("bomb","bomb",1000,2,"this is a bomb. it should be safe. right??","offense",True,100),
+         Item("bomb","bomb",1000,2,"this is a bomb. it should be safe. right??\ncan destroy vaults","offense",True,100),
          Item("pliers","pliers",500,50,"lets you cut wires. defuse bomb. cut locks. very helpful.","item",True,0),
          Item("aoww","aowwsteeng sculpture",3500,4000,"honoring the Aus Aowwsteeng fish","collectable",False,1),
          Item("uranium","uranium",-1,150,"such glow.","ore",False,3),
@@ -43,10 +43,10 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("lava","lava orb",-1,30,"wow this is hot please don't touch me","ore",False,7),
          Item("lock","padlock",40,15,"basic defense for your money. cheap but efficient.","defense",True,10),
          Item("safe","safe",400,20,"lots of bang for your buck to prevent robbers.","defense",True,10),
-         Item("crowbar","crowbar",700,30,"wow u can pry open stuff","offense",True,7),
+         Item("crowbar","crowbar",700,30,"wow u can pry open stuff. like safe!","offense",True,7),
          Item("vault","vault",5000,300,"wow. such secure. bank level. much wow.","defense",True,2),
-         Item("bunker","bunker",12000,1200,"much wow. military grade.","defense",True,2),
-         Item("nuke","nuke",10000,1500,"pls dont destroy world thank u","offense",True,2),
+         Item("bunker","bunker",120000,1200,"much wow. military grade.","defense",True,2),
+         Item("nuke","nuke",10000,1500,"pls dont destroy world thank u. btw u can destroy bunker with nuke.","offense",True,2),
          Item("attack","attack doggo",1000,200,"bork bork this my property now u ded","defence",True,2),
          Item("bone","bone",500,100,"lure doggos","defence",True,2)]
 dic = {}
