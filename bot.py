@@ -807,6 +807,9 @@ async def on_message(message):
                 else:
                     output = output + "\n" + (":tada: "+steal_check.success
                             .format(offense_amount))
+                    if steal_check.defense_consume:
+                        save[steal_user.id]["inventory"][steal_check.defense_item] -= 1
+                        output = output + "\n" + ":boom: u broke {}'s {}".format(steal_name,steal_check.defense_item)
                 if steal_check.consume:
                     consumed = min(
                         save[author]["inventory"][steal_check.offense_item],
@@ -814,9 +817,6 @@ async def on_message(message):
                     )
                     save[author]["inventory"][steal_check.offense_item] -= consumed
                     output = output + "\n" + ":boom: u broke {} {}".format(consumed,steal_check.offense_item)
-                if steal_check.defense_consume:
-                    save[steal_user.id]["inventory"][steal_check.defense_item] -= 1
-                    output = output + "\n" + ":boom: u broke {}'s {}".format(steal_name,steal_check.defense_item)
             else:
                 if random.randint(1,2) == 1:
                     reward = round(save[steal_user.id]["coins"]*(random.randint(6,7)/10))

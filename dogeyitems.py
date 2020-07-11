@@ -46,7 +46,7 @@ items = [Item("alpha","test badge alpha",-1,-1,"test item to test the inventory.
          Item("crowbar","crowbar",700,30,"wow u can pry open stuff. like safe!","offense",True,7),
          Item("vault","vault",5000,300,"wow. such secure. bank level. much wow.","defense",True,2),
          Item("bunker","bunker",120000,1200,"much wow. military grade.","defense",True,2),
-         Item("nuke","nuke",10000,1500,"pls dont destroy world thank u. btw u can destroy bunker with nuke.","offense",True,2),
+         Item("nuke","nuke",10000,1500,"pls dont destroy world thank u.\nbtw u can destroy bunker with nuke.","offense",True,2),
          Item("attack","attack doggo",1000,200,"bork bork this my property now u ded","defence",True,2),
          Item("bone","bone",500,100,"lure doggos","defence",True,2)]
 dic = {}
