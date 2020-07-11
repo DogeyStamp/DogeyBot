@@ -121,7 +121,7 @@ async def on_message(message):
                             "coins":0,
                             "inventory":{},
                             "cooldown":{},
-                            "mine":{}}
+                            "mine":{"depth":0,"current":[], "last_use":0}}
             for default in save_defaults.keys():
                 if not save[person].get(default):
                     save[person][default] = save_defaults[default]
@@ -669,11 +669,9 @@ async def on_message(message):
                             rem_inds.remove(ind)
                             cfg[ind] = sit
                 return cfg
-            if ((not save[author]["mine"]) or
-                (save[author]["cooldown"].get(cmd) and 
-                (time.time() - save[author]["cooldown"][cmd] > 60*30))):
-                # Current is the configuration of the mine, e.g. stone lava lava.
-                save[author]["mine"] = {"depth":0,"current":[]}
+            if time.time()-save[author]["mine"]["last_use"] >= 90*60:
+                save[author]["mine"]["last_use"] = time.time()
+                save[author]["mine"]["depth"] = 0
                 cfg = create_cfg(save[author]["mine"]["depth"])
                 save[author]["mine"]['current'] = cfg
             embed = discord.Embed(title="{}'s mine".format(message.author.name))
