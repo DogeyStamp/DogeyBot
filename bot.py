@@ -125,6 +125,8 @@ async def on_message(message):
             for default in save_defaults.keys():
                 if not save[person].get(default):
                     save[person][default] = save_defaults[default]
+            if not save[person]["mine"].get("last_use"):
+                save[person]["mine"]["last_use"] = 0
             if (not save[person].get("joined")) and is_author:
                 # Author's first use of the bot.
                 save[person]["joined"] = time.time()
