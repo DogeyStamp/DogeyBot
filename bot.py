@@ -85,24 +85,56 @@ async def save_task():
     except asyncio.CancelledError:
         logging.info("Shutdown of data save task successful.")
 
+async def aexec(code):
+    exec(
+        f'async def __ex(): ' +
+        ''.join(f'\n {l}' for l in code.split('\n'))
+    )
+    return await locals()['__ex']()
+
 async def py_console():
     while True:
         cmd = await ainput(">>> ")
         print()
         try:
-            exec(cmd)
+            if "await" in cmd:
+                await aexec(cmd)
+            else:
+                exec(cmd)
         except Exception as err:
             print(err)
         print()
 def close_bot():
+    """Shutdown the bot."""
     logging.info("Initiating shutdown...")
     save_data()
     logging.info("Data saved successfully. Exiting...")
     exit(0)
+async def change_status(activity,name,url=""):
+    """Change the Discord Status of the bot.
+    
+    Activities include:
+        game: Playing something
+        stream: Streaming something (url can be added)
+        listen: Listening to something
+        watching: Watching something
+    """
+    activity_dict = {
+        "game":discord.Game(name=name),
+        "stream":discord.Streaming(name=name, url=url),
+        "listen":discord.Activity(type=discord.ActivityType.listening, name=name),
+        "watching":discord.Activity(type=discord.ActivityType.watching, name=name)
+    }
+    if not activity_dict.get(activity):
+        print("{} is not a valid activity.".format(activity))
+        return
+    await client.change_presence(activity=activity_dict[activity])
+    return
 
 @client.event
 async def on_ready():
     logging.info('Login as {0.user} successful.'.format(client))
+    await change_status("listen", "bork help")
     client.loop.create_task(save_task())
     client.loop.create_task(py_console())
 @client.event
