@@ -403,11 +403,11 @@ async def on_message(message):
                 bal_user = message.author
                 bal_name = message.author.name
             if not save.get(bal_user.id):
-                await message.channel.send("he brok :)")
+                await message.channel.send("they brok :)")
                 return
             if save[bal_user.id]["coins"] == 0:
                 if mentioned:
-                    await message.channel.send("he brok :)")
+                    await message.channel.send("they brok :)")
                 else:
                     await message.channel.send("u brok :(")
             else:
