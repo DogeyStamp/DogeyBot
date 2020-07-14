@@ -717,7 +717,7 @@ async def on_message(message):
             elif 'l' in args:
                 ind = 0
             else:
-                embed.description = 'to mine, mine something: left (`l`) right (`r`) or middle (`m`) `bork mine l`, bork mine r`, `bork mine m`'
+                embed.description = 'to mine, mine something: left (`l`) right (`r`) or middle (`m`) `bork mine l`, `bork mine r`, `bork mine m`'
             if ind != -1:
                 curr_sit = save[author]["mine"]['current']
                 sit_obj = dogeymine.situations.get(curr_sit[ind])
