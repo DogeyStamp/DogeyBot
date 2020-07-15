@@ -32,5 +32,6 @@ tips = ["bork tipp! u can get sweet sweet dogecoin from getting rare, epic or le
         "rich doggo tipp! u can use the balance command to see other people's balances 'bork whats @someones's balance'",
         "get rich fast!! use bork mine to start mining to get rich.",
         "inventory tipp! say bork inv [item] to get detailed descriptions and info for items!!",
-        "shoppers tipp! say bork shop [item] to examine an item before buying!"]
+        "shoppers tipp! say bork shop [item] to examine an item before buying!",
+        "tipp for greedy but cautious robbers: `bork scout` the victim before robbing..."]
 rare = ["meh","ok","common","uncommon","rare","epic","legendary"]

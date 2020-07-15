@@ -200,7 +200,8 @@ async def on_message(message):
                     ("mine","mine"),
                     ("whats","calculate"),
                     ("rob","steal"),
-                    ("steal","steal")])
+                    ("steal","steal"),
+                    ("scout","scout")])
         cmd = ''
         for i in cmd_dict.keys():
             if message.content.lower().find(i) != -1:
@@ -865,8 +866,33 @@ async def on_message(message):
                     save[author]["coins"] -= fine
             await message.channel.send(output)
             return
-
-                
+        if cmd == "scout":
+            if len(message.mentions) > 0:
+                scout_user = message.mentions[0]
+                create_save(scout_user.id)
+                scout_name = message.mentions[0].name
+                if save[author]["coins"] < 500:
+                    await message.channel.send("u don't have enough money to pay the doge gang to sell {}'s location".format(scout_name))
+                    save[author]["cooldown"]["scout"] = 0
+                    return
+                if save[scout_user.id]["coins"] < 500:
+                    await message.channel.send("{} didn't have enough money to get noticed by doge gang so they couldn't get their location"\
+                        .format(scout_name))
+                    save[author]["cooldown"]["scout"] = 0
+                    return
+            else:
+                await message.channel.send("who u scout tho?")
+                save[author]["cooldown"]["scout"] = 0
+                return
+            for steal_check in dogeysteal.steal_checks:
+                if (not save[scout_user.id]["inventory"].get(steal_check.defense_item) or
+                    save[scout_user.id]["inventory"].get(steal_check.defense_item)<=0):
+                    continue
+                else:
+                    await message.channel.send(steal_check.scout.format(scout_name))
+                    return
+            else:
+                await message.channel.send("{}'s money is in box. very unprotected.".format(scout_name))
         with open("dogebase.txt",encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
