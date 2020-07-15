@@ -872,7 +872,7 @@ async def on_message(message):
                 create_save(scout_user.id)
                 scout_name = message.mentions[0].name
                 if save[author]["coins"] < 500:
-                    await message.channel.send("u don't have enough money to pay the doge gang to sell {}'s location".format(scout_name))
+                    await message.channel.send("u don't have enough money to impress the doge gang to tell {}'s location".format(scout_name))
                     save[author]["cooldown"]["scout"] = 0
                     return
                 if save[scout_user.id]["coins"] < 500:
