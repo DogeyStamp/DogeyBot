@@ -32,12 +32,13 @@ reddit = praw.Reddit(client_id="E3x53vfG2tSR_A",
                      user_agent="discord:DogeyBot:v0.1 (by u/DogeyStamp)")
 
 save = {}
-with open("save","r", encoding="utf-8") as save_file:
+with open("save", "r", encoding="utf-8") as save_file:
     save_file.seek(0)
     new_save = save_file.read()
     save = eval(new_save)
 save_file.close()
 logging.info("Data retrieval successful")
+
 
 def item_info(item_obj):
     """Return a Discord Embed with the information about a certain item."""
@@ -64,17 +65,20 @@ def item_info(item_obj):
                 item_obj.description)
     return embed
 
+
 def save_data():
     """Saves the user data to disk."""
-    with open("save","w", encoding="utf-8") as save_file:
+    with open("save", "w", encoding="utf-8") as save_file:
         save_file.write(str(save))
         save_file.close()
+
 
 def order_of_magnitude(number):
     """Return the order of magnitude of the number."""
     if number == 0:
         return 0
     return floor(log(number, 10))
+
 
 async def save_task():
     """Save data every 30 seconds."""
@@ -85,12 +89,14 @@ async def save_task():
     except asyncio.CancelledError:
         logging.info("Shutdown of data save task successful.")
 
+
 async def aexec(code):
     exec(
         f'async def __ex(): ' +
         ''.join(f'\n {l}' for l in code.split('\n'))
     )
     return await locals()['__ex']()
+
 
 async def py_console():
     while True:
@@ -104,15 +110,19 @@ async def py_console():
         except Exception as err:
             print(err)
         print()
+
+
 def close_bot():
     """Shutdown the bot."""
     logging.info("Initiating shutdown...")
     save_data()
     logging.info("Data saved successfully. Exiting...")
     exit(0)
-async def change_status(activity,name,url=""):
+
+
+async def change_status(activity, name, url=""):
     """Change the Discord Status of the bot.
-    
+
     Activities include:
         game: Playing something
         stream: Streaming something (url can be added)
@@ -120,10 +130,10 @@ async def change_status(activity,name,url=""):
         watching: Watching something
     """
     activity_dict = {
-        "game":discord.Game(name=name),
-        "stream":discord.Streaming(name=name, url=url),
-        "listen":discord.Activity(type=discord.ActivityType.listening, name=name),
-        "watching":discord.Activity(type=discord.ActivityType.watching, name=name)
+        "game": discord.Game(name=name),
+        "stream": discord.Streaming(name=name, url=url),
+        "listen": discord.Activity(type=discord.ActivityType.listening, name=name),
+        "watching": discord.Activity(type=discord.ActivityType.watching, name=name)
     }
     if not activity_dict.get(activity):
         print("{} is not a valid activity.".format(activity))
@@ -131,29 +141,33 @@ async def change_status(activity,name,url=""):
     await client.change_presence(activity=activity_dict[activity])
     return
 
+
 @client.event
 async def on_ready():
     logging.info('Login as {0.user} successful.'.format(client))
     await change_status("listen", "bork help")
     client.loop.create_task(save_task())
     client.loop.create_task(py_console())
+
+
 @client.event
 async def on_message(message):
     try:
         author = message.author.id
         if (message.author == client.user or
-            message.content.lower()[:4] != "bork"):
+                message.content.lower()[:4] != "bork"):
             # Only listen people saying bork, and ignore itself.
             return
-        def create_save(person,is_author=False):
+
+        def create_save(person, is_author=False):
             """Create an entry for a person in the save dict."""
             if not save.get(person):
                 save[person] = {}
             save_defaults = {
-                            "coins":0,
-                            "inventory":{},
-                            "cooldown":{},
-                            "mine":{"depth":0,"current":[], "last_use":0}}
+                "coins": 0,
+                "inventory": {},
+                "cooldown": {},
+                "mine": {"depth": 0, "current": [], "last_use": 0}}
             for default in save_defaults.keys():
                 if not save[person].get(default):
                     save[person][default] = save_defaults[default]
@@ -162,7 +176,7 @@ async def on_message(message):
             if (not save[person].get("joined")) and is_author:
                 # Author's first use of the bot.
                 save[person]["joined"] = time.time()
-        create_save(author,True)
+        create_save(author, True)
         if "shutdown" in message.content:
             if author == 437654201863241740:
                 await message.channel.send("initiating shutdown becuz i am good doggo")
@@ -171,37 +185,37 @@ async def on_message(message):
             if author == 437654201863241740:
                 save[437654201863241740]["cooldown"] = {}
                 await message.channel.send("cooldown removed")
-        if random.randint(1,5) == 1:
+        if random.randint(1, 5) == 1:
             await message.channel.send("\n" + random.choice(dogeystrings.tips))
         cmd_dict = collections.OrderedDict([
-                    ("commands","commands"),
-                    ("date","time"),
-                    ("help","help"),
-                    ("buy","buy"),
-                    ("share","share"),
-                    ("gift","gift"),
-                    ("inventory","inventory"),
-                    ("inv","inventory"),
-                    ("shop","shop"),
-                    ("sell","sell"),
-                    ("halp","help"),
-                    ("time","time"),    
-                    ("bank","balance"),
-                    ("bal","balance"),
-                    ("coin","balance"),
-                    ("balance","balance"),
-                    ("meme","meme"),
-                    ("maymay","meme"),
-                    ("politic","politic"),
-                    ("news","news"),
-                    ("quote","quote"),
-                    ("calculate","calculate"),
-                    ("what's","calculate"),
-                    ("mine","mine"),
-                    ("whats","calculate"),
-                    ("rob","steal"),
-                    ("steal","steal"),
-                    ("scout","scout")])
+            ("commands", "commands"),
+            ("date", "time"),
+            ("help", "help"),
+            ("buy", "buy"),
+            ("share", "share"),
+            ("gift", "gift"),
+            ("inventory", "inventory"),
+            ("inv", "inventory"),
+            ("shop", "shop"),
+            ("sell", "sell"),
+            ("halp", "help"),
+            ("time", "time"),
+            ("bank", "balance"),
+            ("bal", "balance"),
+            ("coin", "balance"),
+            ("balance", "balance"),
+            ("meme", "meme"),
+            ("maymay", "meme"),
+            ("politic", "politic"),
+            ("news", "news"),
+            ("quote", "quote"),
+            ("calculate", "calculate"),
+            ("what's", "calculate"),
+            ("mine", "mine"),
+            ("whats", "calculate"),
+            ("rob", "steal"),
+            ("steal", "steal"),
+            ("scout", "scout")])
         cmd = ''
         for i in cmd_dict.keys():
             if message.content.lower().find(i) != -1:
@@ -209,26 +223,26 @@ async def on_message(message):
                 break
         if cmd:
             if (save[author]["cooldown"].get(cmd) and
-                time.time() - save[author]["cooldown"][cmd] < dogeycmds.cmds[cmd][2]):
+                    time.time() - save[author]["cooldown"][cmd] < dogeycmds.cmds[cmd][2]):
                 # Cooldown time has not passed yet.
                 time_diff = time.time() - save[author]["cooldown"][cmd]
-                cooldown_seconds = dogeycmds.cmds[cmd][2]-round(time_diff,2)
+                cooldown_seconds = dogeycmds.cmds[cmd][2]-round(time_diff, 2)
                 prompt = "> " + random.choice(dogeystrings.cool_strs)
                 if cooldown_seconds//(60*60*24):
                     await message.channel.send(prompt.format(
-                        round(cooldown_seconds/(60*60*24),2),"day"))
+                        round(cooldown_seconds/(60*60*24), 2), "day"))
                     return
                 elif cooldown_seconds//(60*60):
                     await message.channel.send(prompt.format(
-                        round(cooldown_seconds/(60*60),2),"hour"))
+                        round(cooldown_seconds/(60*60), 2), "hour"))
                     return
                 elif cooldown_seconds//60:
                     await message.channel.send(prompt.format(
-                        round(cooldown_seconds/60,2),"min"))
+                        round(cooldown_seconds/60, 2), "min"))
                     return
                 else:
                     await message.channel.send(prompt.format(
-                        round(cooldown_seconds,2),"sec"))
+                        round(cooldown_seconds, 2), "sec"))
                     return
             else:
                 save[author]["cooldown"][cmd] = time.time()
@@ -240,10 +254,10 @@ async def on_message(message):
             return
         if cmd == 'commands':
             msg_cpy = message.content.lower()
-            msg_cpy = msg_cpy.replace("bork","").replace("commands","",1)
+            msg_cpy = msg_cpy.replace("bork", "").replace("commands", "", 1)
             for cmd in dogeycmds.cmds.keys():
                 if msg_cpy.find(cmd) != -1:
-                    embed=discord.Embed(
+                    embed = discord.Embed(
                         title=cmd,
                         description=dogeycmds.cmds[cmd][0])
                     embed.set_footer(text="bork bork!")
@@ -259,12 +273,12 @@ async def on_message(message):
                         if not dogeycmds.cmds[cmd][3] == category:
                             continue
                         response += "`{}` ".format(cmd)
-                    embed=discord.Embed(title=category,description=response)
+                    embed = discord.Embed(title=category, description=response)
                     embed.set_footer(text="remember to bork before commands!!")
                     await message.channel.send(embed=embed)
                     break
             else:
-                embed=discord.Embed(title="Help")
+                embed = discord.Embed(title="Help")
                 for category in dogeycmds.categories:
                     embed.add_field(
                         name=category,
@@ -275,18 +289,19 @@ async def on_message(message):
             return
         if cmd == 'calculate':
             whitelist = [
-                        "1","2","3",
-                        "4","5","6",
-                        "7","8","9",
-                        "0","*","+",
-                        "%","-","/",
-                        "^","(",")",
-                        "."]
+                "1", "2", "3",
+                "4", "5", "6",
+                "7", "8", "9",
+                "0", "*", "+",
+                "%", "-", "/",
+                "^", "(", ")",
+                "."]
             ind = max(
-                    message.content.lower().find("calculate"),
-                    message.content.lower().find("what's"),
-                    message.content.lower().find("whats"))
-            eq = ''.join(ch for ch in message.content.lower()[ind:] if ch in whitelist)
+                message.content.lower().find("calculate"),
+                message.content.lower().find("what's"),
+                message.content.lower().find("whats"))
+            eq = ''.join(ch for ch in message.content.lower()
+                         [ind:] if ch in whitelist)
             if eq == '':
                 await message.channel.send("equals wowie!")
                 return
@@ -305,7 +320,7 @@ async def on_message(message):
         if cmd == 'meme':
             mems = []
             for submission in reddit.subreddit("doge").hot(limit=30):
-                img_ends = ["png","svg","jpg","jpeg","gif","tiff"]
+                img_ends = ["png", "svg", "jpg", "jpeg", "gif", "tiff"]
                 for ending in img_ends:
                     if submission.url.endswith(ending):
                         mems.append([
@@ -314,8 +329,8 @@ async def on_message(message):
                             submission.permalink,
                             submission.score])
             random.shuffle(mems)
-            embed=discord.Embed(title=mems[0][1],
-                                url='https://reddit.com'+mems[0][2])
+            embed = discord.Embed(title=mems[0][1],
+                                  url='https://reddit.com'+mems[0][2])
             embed.set_image(url=mems[0][0])
             embed.add_field(name="Upvotes",
                             value="{}".format(mems[0][3]),
@@ -331,8 +346,8 @@ async def on_message(message):
                     submission.permalink,
                     submission.score])
             random.shuffle(mems)
-            embed=discord.Embed(title=mems[0][1],
-                                url='https://reddit.com'+mems[0][2])
+            embed = discord.Embed(title=mems[0][1],
+                                  url='https://reddit.com'+mems[0][2])
             embed.add_field(name="Upvotes",
                             value="{}".format(mems[0][3]),
                             inline=True)
@@ -344,13 +359,13 @@ async def on_message(message):
             mems = []
             for submission in reddit.subreddit("news").hot(limit=30):
                 mems.append([
-                        submission.url,
-                        submission.title,
-                        submission.permalink,
-                        submission.score])
+                    submission.url,
+                    submission.title,
+                    submission.permalink,
+                    submission.score])
             random.shuffle(mems)
-            embed=discord.Embed(title=mems[0][1],
-                                url='https://reddit.com'+mems[0][2])
+            embed = discord.Embed(title=mems[0][1],
+                                  url='https://reddit.com'+mems[0][2])
             embed.add_field(name="Upvotes",
                             value="{}".format(mems[0][3]),
                             inline=True)
@@ -359,7 +374,7 @@ async def on_message(message):
             await message.channel.send(mems[0][0])
             return
         if cmd == 'quote':
-            num = random.randint(1,10000000)
+            num = random.randint(1, 10000000)
             level = 1
             extra_reward = 0
             if num >= 7000000:
@@ -387,10 +402,10 @@ async def on_message(message):
                 extra_reward_str = ''
                 if extra_reward != 0:
                     extra_reward_str = 'bork reward: {} dogecoins'\
-                                        .format(extra_reward)
+                        .format(extra_reward)
                     save[author]["coins"] += extra_reward
-                await message.channel.send(random.choice(text) +\
-                "\nRarity level: ***{0}***\n{1}".format(
+                await message.channel.send(random.choice(text) +
+                                           "\nRarity level: ***{0}***\n{1}".format(
                     dogeystrings.rare[level-1],
                     extra_reward_str))
                 return
@@ -412,10 +427,10 @@ async def on_message(message):
                 else:
                     await message.channel.send("u brok :(")
             else:
-                embed=discord.Embed()
+                embed = discord.Embed()
                 embed.add_field(name="{}'s balance".format(bal_name),
-                                value=random.choice(dogeystrings.bal_strs)\
-                                    .format(str(save[bal_user.id]["coins"])),
+                                value=random.choice(dogeystrings.bal_strs)
+                                .format(str(save[bal_user.id]["coins"])),
                                 inline=False)
                 await message.channel.send(embed=embed)
             return
@@ -423,26 +438,28 @@ async def on_message(message):
             for item in dogeyitems.items:
                 if (item.item_id in message.content.lower() and
                     save[author]["inventory"].get(item.item_id) and
-                    save[author]["inventory"].get(item.item_id) > 0):
+                        save[author]["inventory"].get(item.item_id) > 0):
                     # If item id is in message, and author has item, get info.
                     await message.channel.send(embed=item_info(item))
                     return
-            embed = discord.Embed(title="{}'s inventory"\
-                .format(message.author.name))
+            embed = discord.Embed(title="{}'s inventory"
+                                  .format(message.author.name))
             items = []
             for item in save[author]["inventory"].keys():
                 if not item in dogeyitems.item_ids:
                     logging.warning("Invalid item {} found in {}'s inventory, ID {}"
-                                    .format(item,message.author.name,author))
+                                    .format(item, message.author.name, author))
                 else:
                     items.append(item)
-            item_list = [item for item in items if save[author]["inventory"][item] > 0]
+            item_list = [item for item in items if save[author]
+                         ["inventory"][item] > 0]
             if len(item_list) == 0:
                 embed.description = 'oof u has no item. such empty.'
                 await message.channel.send(embed=embed)
                 return
             else:
-                embed.description = "{} items. such cool".format(len(item_list))
+                embed.description = "{} items. such cool".format(
+                    len(item_list))
             item_per_page = 12
             total_pages = ceil(len(item_list)/item_per_page)
             page_nmb = ''.join([i for i in message.content if i.isdigit()])
@@ -450,20 +467,21 @@ async def on_message(message):
                 page_nmb = int(page_nmb)-1
             else:
                 page_nmb = 0
-            if page_nmb+1>total_pages or page_nmb < 0:
+            if page_nmb+1 > total_pages or page_nmb < 0:
                 page_nmb = 0
-            embed.set_footer(text="page {} out of {}".format(page_nmb+1,total_pages))
+            embed.set_footer(text="page {} out of {}".format(
+                page_nmb+1, total_pages))
             for item in item_list[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
                 item_obj = dogeyitems.dic[item]
                 if not item in dogeyitems.item_ids:
                     logging.warning("Invalid item {} found in {}'s inventory, ID {}"
-                                     .format(item,message.author.name,author))
+                                    .format(item, message.author.name, author))
                     continue
                 embed.add_field(
-                    name="{} - {}"\
-                        .format(item_obj.name,save[author]["inventory"][item]),
-                    value="ID: `{1}` - {0}"\
-                        .format(item_obj.item_type,item_obj.item_id),
+                    name="{} - {}"
+                    .format(item_obj.name, save[author]["inventory"][item]),
+                    value="ID: `{1}` - {0}"
+                    .format(item_obj.item_type, item_obj.item_id),
                     inline=True)
             await message.channel.send(embed=embed)
             return
@@ -474,8 +492,8 @@ async def on_message(message):
                     return
             else:
                 embed = discord.Embed(
-                                    title="doggo shop",
-                                    description='henlo! pls buy my stuff')
+                    title="doggo shop",
+                    description='henlo! pls buy my stuff')
                 item_list = [item for item in dogeyitems.items if item.in_shop]
                 item_per_page = 12
                 total_pages = ceil(len(item_list)/item_per_page)
@@ -484,22 +502,23 @@ async def on_message(message):
                     page_nmb = int(page_nmb)-1
                 else:
                     page_nmb = 0
-                if page_nmb+1>total_pages or page_nmb < 0:
+                if page_nmb+1 > total_pages or page_nmb < 0:
                     page_nmb = 0
-                embed.set_footer(text="page {} out of {}"\
-                                .format(page_nmb+1,total_pages))
+                embed.set_footer(text="page {} out of {}"
+                                 .format(page_nmb+1, total_pages))
                 for item in item_list[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
                     embed.add_field(
                         name="{}".format(item.name),
-                        value="ID: `{1}` - {0}"\
-                            .format(item.item_type,item.item_id),
+                        value="ID: `{1}` - {0}"
+                        .format(item.item_type, item.item_id),
                         inline=True)
                 await message.channel.send(embed=embed)
                 return
         if cmd == "buy":
             for item in dogeyitems.items:
                 if item.item_id in message.content.lower() and item.in_shop:
-                    quantity = ''.join([i for i in message.content if i.isdigit()])
+                    quantity = ''.join(
+                        [i for i in message.content if i.isdigit()])
                     if bool(quantity):
                         quantity = int(quantity)
                     else:
@@ -508,8 +527,8 @@ async def on_message(message):
                     if save[author]["coins"] - cost >= 0:
                         embed = discord.Embed(
                             title='bought!',
-                            description="bought {} {} for {} dogecoins."\
-                                .format(quantity, item.name, cost))
+                            description="bought {} {} for {} dogecoins."
+                            .format(quantity, item.name, cost))
                         save[author]["coins"] -= cost
                         if save[author]["inventory"].get(item.item_id):
                             save[author]["inventory"][item.item_id] += quantity
@@ -522,23 +541,24 @@ async def on_message(message):
         if cmd == "sell":
             for item in dogeyitems.items:
                 if item.item_id in message.content.lower():
-                    quantity = ''.join([i for i in message.content if i.isdigit()])
+                    quantity = ''.join(
+                        [i for i in message.content if i.isdigit()])
                     if bool(quantity):
                         quantity = int(quantity)
                     else:
                         quantity = 1
-                    if ("max" in message.content.lower() or 
-                        "all" in message.content.lower()):
+                    if ("max" in message.content.lower() or
+                            "all" in message.content.lower()):
                         if (save[author]["inventory"].get(item.item_id) and
-                            save[author]["inventory"][item.item_id] > 0):
+                                save[author]["inventory"][item.item_id] > 0):
                             quantity = save[author]["inventory"][item.item_id]
                     cost = quantity * item.sell_cost
                     if save[author]["inventory"].get(item.item_id):
                         if save[author]["inventory"][item.item_id] >= quantity:
                             embed = discord.Embed(
                                 title='sold!',
-                                description="sold {} {} for {} dogecoins."\
-                                    .format(quantity, item.name, cost))
+                                description="sold {} {} for {} dogecoins."
+                                .format(quantity, item.name, cost))
                             save[author]["coins"] += cost
                             save[author]["inventory"][item.item_id] -= quantity
                             await message.channel.send(embed=embed)
@@ -547,13 +567,13 @@ async def on_message(message):
                                 "aww u not enough {}.".format(item.name))
                     return
         if cmd == "gift":
-            #Knockoff sell code
+            # Knockoff sell code
             if len(message.mentions) > 0:
                 gift_user = message.mentions[0]
                 create_save(gift_user.id)
                 gift_name = message.mentions[0].name
                 if (not save[gift_user.id].get("joined") or
-                    time.time() -  save[gift_user.id]["joined"] < 60*60*24*7):
+                        time.time() - save[gift_user.id]["joined"] < 60*60*24*7):
                     await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
                     save[author]["cooldown"]["gift"] = 0
                     return
@@ -566,18 +586,20 @@ async def on_message(message):
                     "hey u need to wait few days so me can tell ur not a new doggo here thx")
                 save[author]["cooldown"]["gift"] = 0
                 return
-            cleaned_message = message.content.replace(gift_user.mention[2:],"")
+            cleaned_message = message.content.replace(
+                gift_user.mention[2:], "")
             for item in dogeyitems.items:
                 if item.item_id in message.content.lower():
-                    quantity = ''.join([i for i in cleaned_message if i.isdigit()])
+                    quantity = ''.join(
+                        [i for i in cleaned_message if i.isdigit()])
                     if bool(quantity):
                         quantity = int(quantity)
                     else:
                         quantity = 1
                     if ("max" in message.content.lower() or
-                        "all" in message.content.lower()):
+                            "all" in message.content.lower()):
                         if (save[author]["inventory"].get(item.item_id) and
-                            save[author]["inventory"][item.item_id] > 0):
+                                save[author]["inventory"][item.item_id] > 0):
                             quantity = min(
                                 save[author]["inventory"][item.item_id],
                                 item.gift_limit)
@@ -592,8 +614,8 @@ async def on_message(message):
                         elif save[author]["inventory"][item.item_id] >= quantity:
                             embed = discord.Embed(
                                 title='given!',
-                                description="gave {} {} to {}. what a deal!"\
-                                    .format(quantity, item.name, gift_name))
+                                description="gave {} {} to {}. what a deal!"
+                                .format(quantity, item.name, gift_name))
                             save[author]["inventory"][item.item_id] -= quantity
                             if not save[gift_user.id]["inventory"]\
                                     .get(item.item_id):
@@ -603,8 +625,8 @@ async def on_message(message):
                             await message.channel.send(embed=embed)
                             return
                         else:
-                            await message.channel.send("aww u not enough {}."\
-                                .format(item.name))
+                            await message.channel.send("aww u not enough {}."
+                                                       .format(item.name))
                             save[author]["cooldown"]["gift"] = 0
                     return
             else:
@@ -612,18 +634,18 @@ async def on_message(message):
         if cmd == "share":
             def receive_limit(x):
                 return 10**order_of_magnitude(x)+2
-            #Knockoff gift code
+            # Knockoff gift code
             if len(message.mentions) > 0:
                 share_user = message.mentions[0]
                 create_save(share_user.id)
                 share_name = message.mentions[0].name
                 if (not save[share_user.id].get("joined") or
-                    time.time() -  save[share_user.id]["joined"] < 60*60*24*7):
+                        time.time() - save[share_user.id]["joined"] < 60*60*24*7):
                     await message.channel.send("hey hey no gib stuff to newb. very bad hooman.")
                     save[author]["cooldown"]["share"] = 0
                     return
                 cleaned_message = message.content.replace(
-                    share_user.mention[2:],"")
+                    share_user.mention[2:], "")
             else:
                 await message.channel.send("who this money for??")
                 save[author]["cooldown"]["share"] = 0
@@ -657,13 +679,13 @@ async def on_message(message):
                 if quantity == old_quantity:
                     embed = discord.Embed(
                         title='given!',
-                        description="gave {} dogecoins to {}. there was a tax of {}, but we rounded your money amount."\
-                            .format(quantity, share_name,tax))
+                        description="gave {} dogecoins to {}. there was a tax of {}, but we rounded your money amount."
+                        .format(quantity, share_name, tax))
                 else:
                     embed = discord.Embed(
                         title='given!',
-                        description="gave {} dogecoins to {}. there was a tax of {}."\
-                            .format(quantity, share_name,tax))
+                        description="gave {} dogecoins to {}. there was a tax of {}."
+                        .format(quantity, share_name, tax))
                 await message.channel.send(embed=embed)
                 return
             else:
@@ -672,11 +694,12 @@ async def on_message(message):
                 return
         if cmd == "mine":
             args = message.content.lower()\
-                .replace("bork",'')\
-                .replace("mine","")
+                .replace("bork", '')\
+                .replace("mine", "")
+
             def create_cfg(depth):
                 """Return a configuration of ores."""
-                def distribution(d1,d2,depth,peak):
+                def distribution(d1, d2, depth, peak):
                     """Find the amount of ore at a certain depth"""
                     if d1 > depth or d2 < depth:
                         return 0
@@ -685,7 +708,7 @@ async def on_message(message):
                         return round(peak * ((depth-d1)/(center-d1)))
                     if depth > center:
                         return round(peak * (abs(depth-d2)/abs(center-d2)))
-                cfg = ["stone","stone","stone"]
+                cfg = ["stone", "stone", "stone"]
                 # Stone is default, gets replaced.
                 for sit in dogeymine.situations.keys():
                     if sit == 'stone':
@@ -694,12 +717,12 @@ async def on_message(message):
                     remaining = distribution(
                         sit_ob.d1,
                         sit_ob.d2,
-                        depth,sit_ob.peak)
-                    remaining = min(remaining,3)
-                    rem_inds = [0,1,2]
+                        depth, sit_ob.peak)
+                    remaining = min(remaining, 3)
+                    rem_inds = [0, 1, 2]
                     while remaining > 0 and rem_inds:
                         remaining -= 1
-                        if random.randint(1,sit_ob.chance) == 1:
+                        if random.randint(1, sit_ob.chance) == 1:
                             ind = random.choice(rem_inds)
                             rem_inds.remove(ind)
                             cfg[ind] = sit
@@ -709,7 +732,8 @@ async def on_message(message):
                 save[author]["mine"]["depth"] = 0
                 cfg = create_cfg(save[author]["mine"]["depth"])
                 save[author]["mine"]['current'] = cfg
-            embed = discord.Embed(title="{}'s mine".format(message.author.name))
+            embed = discord.Embed(
+                title="{}'s mine".format(message.author.name))
             ind = -1
             if 'm' in args:
                 ind = 1
@@ -723,25 +747,27 @@ async def on_message(message):
                 curr_sit = save[author]["mine"]['current']
                 sit_obj = dogeymine.situations.get(curr_sit[ind])
                 if not sit_obj:
-                    raise Exception("Mining situ not found: {}"\
-                        .format(curr_sit))
+                    raise Exception("Mining situ not found: {}"
+                                    .format(curr_sit))
                 if sit_obj.dangerous:
                     def danger():
                         if sit_obj.danger_dist == 0:
                             save[author]["mine"]["depth"] = 0
                         else:
                             save[author]["mine"]["depth"] = max(0,
-                                save[author]["mine"]["depth"]-sit_obj.danger_dist)
+                                                                save[author]["mine"]["depth"]-sit_obj.danger_dist)
                         embed.description = sit_obj.danger_string
                     if sit_obj.req != '':
                         if not save[author]['inventory'].get(sit_obj.req):
                             if sit_obj.req_dang:
                                 danger()
                             else:
-                                save[author]["mine"]["depth"] += random.randint(1,3)
+                                save[author]["mine"]["depth"] += random.randint(
+                                    1, 3)
                                 embed.description = sit_obj.req_str
                         else:
-                            save[author]["mine"]["depth"] += random.randint(1,3)
+                            save[author]["mine"]["depth"] += random.randint(
+                                1, 3)
                             amount = random.randint(sit_obj.r1, sit_obj.r2)
                             embed.description = sit_obj.body.format(amount)
                             if save[author]['inventory'].get(sit_obj.reward):
@@ -760,15 +786,15 @@ async def on_message(message):
                         for curr_sit in save[author]["mine"]['current']:
                             sit_obj = dogeymine.situations.get(curr_sit)
                             if not sit_obj:
-                                raise Exception("Mining situ not found: {}"\
-                                    .format(curr_sit))
+                                raise Exception("Mining situ not found: {}"
+                                                .format(curr_sit))
                             mine_pics.append(sit_obj.pic)
                         embed.add_field(name="ur mine",
                                         value=' '.join(mine_pics))
                         await message.channel.send(embed=embed)
                         return
                     else:
-                        save[author]["mine"]["depth"] += random.randint(1,3)
+                        save[author]["mine"]["depth"] += random.randint(1, 3)
                         amount = random.randint(sit_obj.r1, sit_obj.r2)
                         embed.description = sit_obj.body.format(amount)
                         if save[author]['inventory'].get(sit_obj.reward):
@@ -776,7 +802,7 @@ async def on_message(message):
                         else:
                             save[author]['inventory'][sit_obj.reward] = amount
                 else:
-                    save[author]["mine"]["depth"] += random.randint(1,3)
+                    save[author]["mine"]["depth"] += random.randint(1, 3)
                     amount = random.randint(sit_obj.r1, sit_obj.r2)
                     embed.description = sit_obj.body.format(amount)
                     if save[author]['inventory'].get(sit_obj.reward):
@@ -786,14 +812,16 @@ async def on_message(message):
                 embed.title = embed.title + "\n{} depth\n{}".format(
                     save[author]["mine"]["depth"],
                     sit_obj.name)
-                save[author]["mine"]['current'] = create_cfg(save[author]["mine"]["depth"])
+                save[author]["mine"]['current'] = create_cfg(
+                    save[author]["mine"]["depth"])
             mine_pics = []
             for curr_sit in save[author]["mine"]['current']:
                 sit_obj = dogeymine.situations.get(curr_sit)
                 if not sit_obj:
-                    raise Exception("Mining situ not found: {}".format(curr_sit))
+                    raise Exception(
+                        "Mining situ not found: {}".format(curr_sit))
                 mine_pics.append(sit_obj.pic)
-            embed.add_field(name="ur mine",value=' '.join(mine_pics))
+            embed.add_field(name="ur mine", value=' '.join(mine_pics))
             await message.channel.send(embed=embed)
             return
         if cmd == "steal":
@@ -807,8 +835,8 @@ async def on_message(message):
                     save[author]["cooldown"]["steal"] = 0
                     return
                 if save[steal_user.id]["coins"] < 500:
-                    await message.channel.send("u shouldn't rob {}, they only have {} coins"\
-                        .format(steal_name, save[steal_user.id]["coins"]))
+                    await message.channel.send("u shouldn't rob {}, they only have {} coins"
+                                               .format(steal_name, save[steal_user.id]["coins"]))
                     save[author]["cooldown"]["steal"] = 0
                     return
             else:
@@ -820,46 +848,54 @@ async def on_message(message):
                     steal_check.offense_min,
                     steal_check.offense_max)
                 if (not save[steal_user.id]["inventory"].get(steal_check.defense_item) or
-                    save[steal_user.id]["inventory"].get(steal_check.defense_item)<=0):
+                        save[steal_user.id]["inventory"].get(steal_check.defense_item) <= 0):
                     continue
                 if (not save[author]["inventory"].get(steal_check.offense_item) or
-                    save[author]["inventory"].get(steal_check.offense_item)<=0):
-                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
-                    output = output + "\n" + (steal_check.no_item+
-                        "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
+                        save[author]["inventory"].get(steal_check.offense_item) <= 0):
+                    fine = round(save[author]["coins"] *
+                                 (random.randint(5, 9)/10))
+                    output = output + "\n" + (steal_check.no_item +
+                                              "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
                     save[author]["coins"] -= fine
                     break
                 elif (save[author]["inventory"][steal_check.offense_item] <
-                    offense_amount):
-                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
-                    output = output + "\n" +  (steal_check.not_enough
-                        .format(save[author]["inventory"][steal_check.offense_item])+
-                        "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
+                      offense_amount):
+                    fine = round(save[author]["coins"] *
+                                 (random.randint(5, 9)/10))
+                    output = output + "\n" + (steal_check.not_enough
+                                              .format(save[author]["inventory"][steal_check.offense_item]) +
+                                              "\n:police_officer: u were arrested oof. ***{}*** dogecoin fine.".format(fine))
                     save[author]["coins"] -= fine
                     break
                 else:
                     output = output + "\n" + (":tada: "+steal_check.success
-                            .format(offense_amount))
+                                              .format(offense_amount))
                     if steal_check.defense_consume:
                         save[steal_user.id]["inventory"][steal_check.defense_item] -= 1
-                        output = output + "\n" + ":boom: u broke {}'s {}".format(steal_name,steal_check.defense_item)
+                        output = output + "\n" + \
+                            ":boom: u broke {}'s {}".format(
+                                steal_name, steal_check.defense_item)
                 if steal_check.consume:
                     consumed = min(
                         save[author]["inventory"][steal_check.offense_item],
                         offense_amount
                     )
                     save[author]["inventory"][steal_check.offense_item] -= consumed
-                    output = output + "\n" + ":boom: u broke {} {}".format(consumed,steal_check.offense_item)
+                    output = output + "\n" + \
+                        ":boom: u broke {} {}".format(
+                            consumed, steal_check.offense_item)
             else:
-                if random.randint(1,2) == 1:
-                    reward = round(save[steal_user.id]["coins"]*(random.randint(6,7)/10))
+                if random.randint(1, 2) == 1:
+                    reward = round(save[steal_user.id]
+                                   ["coins"]*(random.randint(6, 7)/10))
                     output = output + ("\n:moneybag: wow u stole ***{}*** dogecoin from {}".format(
                         reward, steal_name
                     ))
                     save[steal_user.id]["coins"] -= reward
                     save[author]["coins"] += reward
                 else:
-                    fine = round(save[author]["coins"]*(random.randint(5,9)/10))
+                    fine = round(save[author]["coins"] *
+                                 (random.randint(5, 9)/10))
                     output = output + ("\n:police_officer: o no u got arrested after breaking in to the money.\n:money_with_wings: ***{}*** dogecoin fine".format(
                         fine
                     ))
@@ -876,8 +912,8 @@ async def on_message(message):
                     save[author]["cooldown"]["scout"] = 0
                     return
                 if save[scout_user.id]["coins"] < 500:
-                    await message.channel.send("{} didn't have enough money to get noticed by doge gang so they couldn't get their location"\
-                        .format(scout_name))
+                    await message.channel.send("{} didn't have enough money to get noticed by doge gang so they couldn't get their location"
+                                               .format(scout_name))
                     save[author]["cooldown"]["scout"] = 0
                     return
             else:
@@ -886,14 +922,14 @@ async def on_message(message):
                 return
             for steal_check in dogeysteal.steal_checks:
                 if (not save[scout_user.id]["inventory"].get(steal_check.defense_item) or
-                    save[scout_user.id]["inventory"].get(steal_check.defense_item)<=0):
+                        save[scout_user.id]["inventory"].get(steal_check.defense_item) <= 0):
                     continue
                 else:
                     await message.channel.send(steal_check.scout.format(scout_name))
                     return
             else:
                 await message.channel.send("{}'s money is in box. very unprotected.".format(scout_name))
-        with open("dogebase.txt",encoding="utf-8") as f:
+        with open("dogebase.txt", encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
             text = '\n'.join(text)
@@ -902,10 +938,11 @@ async def on_message(message):
         if not response:
             response = ''
         response_l = response.split()
-        await message.channel.send(' '.join(response_l[:random.randint(10,45)])+"\n"+random.choice(dogeystrings.help_strs))
+        await message.channel.send(' '.join(response_l[:random.randint(10, 45)])+"\n"+random.choice(dogeystrings.help_strs))
     except Exception as err:
         await message.channel.send("oh noes! I has an error, pls tell dogeystamp")
-        logging.exception("{}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(err,message.content,message.author.name+"#"+message.author.discriminator,author))
+        logging.exception("{}\nInput causing error: {}\nAuthor: {}\nAuthor ID: {}".format(
+            err, message.content, message.author.name+"#"+message.author.discriminator, author))
 print("\n\nThis is a Doge Approved program.\n______________________________\n\nDogeyBot Debug Console\n")
 
 client.run(dogeytoken.token)

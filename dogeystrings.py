@@ -1,24 +1,24 @@
-help_strs =  ["if u want halp say bork bork i want help or something similar",
-            "bork bork need help? say bork bork halp",
-            "bork bork need halp? say bork bork help",
-            "for help with talking to me, say bork help",
-            "need halp? say bork halp me pls",
-            "for halp say bork bork pls gib halp"]
+help_strs = ["if u want halp say bork bork i want help or something similar",
+             "bork bork need help? say bork bork halp",
+             "bork bork need halp? say bork bork help",
+             "for help with talking to me, say bork help",
+             "need halp? say bork halp me pls",
+             "for halp say bork bork pls gib halp"]
 help_prompt = '''henlo! i am DogeyBot.
 i am good doggo. to talk to me, say bork. u can talk naturally, like "Bork bork I want help". for a list of commands, say "bork i want list of commands" or "bork bork what are the commands?!"
 if u want help for an individual command, say "bork commands [command]"'''
-post_strs =  ["here is ur rebit post",
-            "i like rebbit",
-            "reddet posts? wow such cool",
-            "wow such entertainment",
-            "bork bork here is rebbit post",
-            "rebbit is cool"]
-cool_strs =  ["stap u too fast {} {} pls",
-            "{} {} u bork too fast",
-            "such fast. such annoying. pls wait {} {} ok??",
-            "wow pls wait {} {}",
-            "bork bork BORK!! u too fast {} {}",
-            "pls wait {} {} k??"]
+post_strs = ["here is ur rebit post",
+             "i like rebbit",
+             "reddet posts? wow such cool",
+             "wow such entertainment",
+             "bork bork here is rebbit post",
+             "rebbit is cool"]
+cool_strs = ["stap u too fast {} {} pls",
+             "{} {} u bork too fast",
+             "such fast. such annoying. pls wait {} {} ok??",
+             "wow pls wait {} {}",
+             "bork bork BORK!! u too fast {} {}",
+             "pls wait {} {} k??"]
 bal_strs = ["has {} dogecoins",
             "wow {} doggocoins",
             "da balance: {} dogecoin!!",
@@ -34,4 +34,4 @@ tips = ["bork tipp! u can get sweet sweet dogecoin from getting rare, epic or le
         "inventory tipp! say bork inv [item] to get detailed descriptions and info for items!!",
         "shoppers tipp! say bork shop [item] to examine an item before buying!",
         "tipp for greedy but cautious robbers: `bork scout` the victim before robbing..."]
-rare = ["meh","ok","common","uncommon","rare","epic","legendary"]
+rare = ["meh", "ok", "common", "uncommon", "rare", "epic", "legendary"]
