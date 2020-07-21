@@ -15,5 +15,6 @@ cmds = {"help": ["get halp for doggo speak!", "Bork bork. I need ***help***!!", 
         "gift": ["gift stuff", "bork gift [person] [quantity] [item] / bork gift [item] all", 30*60, "currency"],
         "share": ["share your dogecoins. taxes are there, and limits too.", "bork share [person] [quantity] / bork share all", 90*60, "currency"],
         "steal": ["ugh i hate mining. i love rich. hey lets steal dogecoins", "bork steal [person]", 60*60*12, "currency"],
-        "scout": ["i wamt rob but need prepare. hey let's scout his house. see person's best defense (will see vault if person has vault and safe)", "bork scout [person]", 60*5, "currency"]}
+        "scout": ["i wamt rob but need prepare. hey let's scout his house. see person's best defense (will see vault if person has vault and safe)", "bork scout [person]", 60*5, "currency"],
+        "rich": ["see who is richest", "bork who is richest??", 10, "currency"]}
 categories = ["general", "utility", "fun", "currency"]

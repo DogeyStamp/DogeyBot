@@ -215,7 +215,8 @@ async def on_message(message):
             ("whats", "calculate"),
             ("rob", "steal"),
             ("steal", "steal"),
-            ("scout", "scout")])
+            ("scout", "scout"),
+            ("rich", "rich")])
         cmd = ''
         for i in cmd_dict.keys():
             if message.content.lower().find(i) != -1:
@@ -929,6 +930,36 @@ async def on_message(message):
                     return
             else:
                 await message.channel.send("{}'s money is in box. very unprotected.".format(scout_name))
+        if cmd == "rich":
+            bals = []
+            for member in message.guild.members:
+                if save.get(member.id):
+                    create_save(member.id)
+                    bals.append([save[member.id]["coins"],member.name])
+            bals.sort(reverse=True)
+            embed = discord.Embed(title="rich people in {}".format(message.guild.name))
+            bals = [[i+1] + bals[i] for i in range(len(bals))]
+
+            item_per_page = 12
+            total_pages = ceil(len(bals)/item_per_page)
+            page_nmb = ''.join([i for i in message.content if i.isdigit()])
+            if bool(page_nmb):
+                page_nmb = int(page_nmb)-1
+            else:
+                page_nmb = 0
+            if page_nmb+1 > total_pages or page_nmb < 0:
+                page_nmb = 0
+            embed.set_footer(text="page {} out of {}".format(
+                page_nmb+1, total_pages))
+            for bal in bals[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
+                embed.add_field(
+                    name="#{} - {}"
+                    .format(bal[0],bal[2]),
+                    value="{} dogecoins"
+                    .format(bal[1]),
+                    inline=False)
+            await message.channel.send(embed=embed)
+            return
         with open("dogebase.txt", encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
