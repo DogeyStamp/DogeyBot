@@ -248,7 +248,8 @@ async def on_message(message):
             else:
                 save[author]["cooldown"][cmd] = time.time()
         if random.randint(1, 250) == 1 and cmd:
-            available_items = [i for i in save[author]["inventory"].keys() if save[author]["inventory"][i] > 0]
+            available_items = [i for i in save[author]["inventory"].keys(
+            ) if save[author]["inventory"][i] > 0]
             buff = []
             for item in available_items:
                 item_obj = dogeyitems.dic[item]
@@ -257,17 +258,19 @@ async def on_message(message):
             available_items = buff
             embed = discord.Embed(
                 title="o no!!", description="the doge ore trader was impatient and sold some of your ores against your will")
-            count = random.randint(1,4)
+            count = random.randint(1, 4)
             if available_items:
                 for item in available_items:
                     item_obj = dogeyitems.dic[item]
                     if count <= 0:
                         break
                     count -= 1
-                    if random.randint(1,5):
-                        amount = ceil(random.randint(1,70)/100*save[author]["inventory"][item])
+                    if random.randint(1, 5):
+                        amount = ceil(random.randint(1, 70)/100 *
+                                      save[author]["inventory"][item])
                         cost = amount * item_obj.sell_cost
-                        embed.add_field(name="sold {} {}".format(amount,item_obj.name), value="for {} dogecoins".format(cost))
+                        embed.add_field(name="sold {} {}".format(
+                            amount, item_obj.name), value="for {} dogecoins".format(cost))
                         save[author]["inventory"][item] -= amount
                         save[author]["coins"] += cost
                 await message.channel.send(embed=embed)
