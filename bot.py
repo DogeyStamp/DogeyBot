@@ -247,6 +247,30 @@ async def on_message(message):
                     return
             else:
                 save[author]["cooldown"][cmd] = time.time()
+        if random.randint(1, 250) == 1 and cmd:
+            available_items = [i for i in save[author]["inventory"].keys() if save[author]["inventory"][i] > 0]
+            buff = []
+            for item in available_items:
+                item_obj = dogeyitems.dic[item]
+                if item_obj.item_type == "ore":
+                    buff.append(item)
+            available_items = buff
+            embed = discord.Embed(
+                title="o no!!", description="the doge ore trader was impatient and sold some of your ores against your will")
+            count = random.randint(1,4)
+            if available_items:
+                for item in available_items:
+                    item_obj = dogeyitems.dic[item]
+                    if count <= 0:
+                        break
+                    count -= 1
+                    if random.randint(1,5):
+                        amount = ceil(random.randint(1,70)/100*save[author]["inventory"][item])
+                        cost = amount * item_obj.sell_cost
+                        embed.add_field(name="sold {} {}".format(amount,item_obj.name), value="for {} dogecoins".format(cost))
+                        save[author]["inventory"][item] -= amount
+                        save[author]["coins"] += cost
+                await message.channel.send(embed=embed)
         if cmd == 'time':
             await message.channel.send(datetime.datetime.now())
             return
@@ -935,9 +959,10 @@ async def on_message(message):
             for member in message.guild.members:
                 if save.get(member.id):
                     create_save(member.id)
-                    bals.append([save[member.id]["coins"],member.name])
+                    bals.append([save[member.id]["coins"], member.name])
             bals.sort(reverse=True)
-            embed = discord.Embed(title="rich people in {}".format(message.guild.name))
+            embed = discord.Embed(
+                title="rich people in {}".format(message.guild.name))
             bals = [[i+1] + bals[i] for i in range(len(bals))]
 
             item_per_page = 12
@@ -954,7 +979,7 @@ async def on_message(message):
             for bal in bals[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
                 embed.add_field(
                     name="#{} - {}"
-                    .format(bal[0],bal[2]),
+                    .format(bal[0], bal[2]),
                     value="{} dogecoins"
                     .format(bal[1]),
                     inline=False)
