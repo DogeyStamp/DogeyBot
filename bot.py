@@ -194,6 +194,7 @@ async def on_message(message):
             ("buy", "buy"),
             ("share", "share"),
             ("gift", "gift"),
+            ("value", "value"),
             ("inventory", "inventory"),
             ("inv", "inventory"),
             ("shop", "shop"),
@@ -988,6 +989,21 @@ async def on_message(message):
                     inline=False)
             await message.channel.send(embed=embed)
             return
+        if cmd == "value":
+            available_items = [i for i in save[author]["inventory"].keys(
+            ) if save[author]["inventory"][i] > 0]
+            buff = []
+            for item in available_items:
+                item_obj = dogeyitems.dic[item]
+                if item_obj.item_type == "ore" or item_obj.item_type == "collectable":
+                    buff.append(item)
+            available_items = buff
+            sell_value = 0
+            for item in available_items:
+                item_obj = dogeyitems.dic[item]
+                sell_value += item_obj.sell_cost * \
+                    save[author]["inventory"][item]
+            await message.channel.send("ur stuff worth {} dogecoin".format(sell_value))
         with open("dogebase.txt", encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
