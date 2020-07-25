@@ -167,7 +167,8 @@ async def on_message(message):
                 "coins": 0,
                 "inventory": {},
                 "cooldown": {},
-                "mine": {"depth": 0, "current": [], "last_use": 0}}
+                "mine": {"depth": 0, "current": [], "last_use": 0},
+                "black":{"deals":[],"trust":0}}
             for default in save_defaults.keys():
                 if not save[person].get(default):
                     save[person][default] = save_defaults[default]
@@ -195,6 +196,7 @@ async def on_message(message):
             ("share", "share"),
             ("gift", "gift"),
             ("value", "value"),
+            ("black", "black"),
             ("inventory", "inventory"),
             ("inv", "inventory"),
             ("shop", "shop"),
@@ -757,10 +759,10 @@ async def on_message(message):
                             cfg[ind] = sit
                 return cfg
             if time.time()-save[author]["mine"]["last_use"] >= 90*60:
-                save[author]["mine"]["last_use"] = time.time()
                 save[author]["mine"]["depth"] = 0
                 cfg = create_cfg(save[author]["mine"]["depth"])
                 save[author]["mine"]['current'] = cfg
+            save[author]["mine"]["last_use"] = time.time()
             embed = discord.Embed(
                 title="{}'s mine".format(message.author.name))
             ind = -1
@@ -1004,6 +1006,9 @@ async def on_message(message):
                 sell_value += item_obj.sell_cost * \
                     save[author]["inventory"][item]
             await message.channel.send("ur stuff worth {} dogecoin".format(sell_value))
+        if cmd == "black":
+            trust = save[author]["black"]["trust"]
+            deals = save[author]["black"]["deals"]
         with open("dogebase.txt", encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
