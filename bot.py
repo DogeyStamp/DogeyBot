@@ -757,10 +757,10 @@ async def on_message(message):
                             cfg[ind] = sit
                 return cfg
             if time.time()-save[author]["mine"]["last_use"] >= 90*60:
-                save[author]["mine"]["last_use"] = time.time()
                 save[author]["mine"]["depth"] = 0
                 cfg = create_cfg(save[author]["mine"]["depth"])
                 save[author]["mine"]['current'] = cfg
+            save[author]["mine"]["last_use"] = time.time()
             embed = discord.Embed(
                 title="{}'s mine".format(message.author.name))
             ind = -1
