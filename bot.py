@@ -18,6 +18,7 @@ import dogeytoken
 import dogeyitems
 import dogeymine
 import dogeysteal
+import dogeyblack
 
 logging.basicConfig(filename='dogeybot.log',
                     format='[%(asctime)s] [%(levelname)s] - %(message)s',
@@ -38,6 +39,26 @@ with open("save", "r", encoding="utf-8") as save_file:
     save = eval(new_save)
 save_file.close()
 logging.info("Data retrieval successful")
+
+
+def create_save(person, is_author=False):
+    """Create an entry for a person in the save dict."""
+    if not save.get(person):
+        save[person] = {}
+    save_defaults = {
+        "coins": 0,
+        "inventory": {},
+        "cooldown": {},
+        "mine": {"depth": 0, "current": [], "last_use": 0},
+        "black": {"trust": 0}}
+    for default in save_defaults.keys():
+        if not save[person].get(default):
+            save[person][default] = save_defaults[default]
+    if not save[person]["mine"].get("last_use"):
+        save[person]["mine"]["last_use"] = 0
+    if (not save[person].get("joined")) and is_author:
+        # Author's first use of the bot.
+        save[person]["joined"] = time.time()
 
 
 def item_info(item_obj):
@@ -142,6 +163,88 @@ async def change_status(activity, name, url=""):
     return
 
 
+def item_check(person, amount, item):
+    """Check if giving/removing an amount of items from a person is valid.
+
+    Arguments:
+
+        person: int
+            ID of person to give stuff to.
+        amount: int
+            Amount of items to give.
+        item: str
+            ID of the item, or "coin" for coins.
+
+    Returns True if giving is possible.
+    Returns False if there wasn't enough items to take away.
+
+    """
+
+    create_save(person)
+    if item == "coin":
+        if save[person]["coins"] + amount < 0:
+            return False
+        else:
+            return True
+    if save[person]["inventory"].get(item):
+        return not save[person]["inventory"][item] + amount < 0
+    return not amount < 0
+
+
+def item_give(person, amount, item):
+    """Give item to person. Negative amounts to remove items are allowed.
+
+    Arguments:
+
+        person: int
+            ID of person to give stuff to.
+        amount: int
+            Amount of items to give.
+        item: str
+            ID of the item, or "coin" for coins.
+
+    Returns True if giving was successful.
+    Returns False if there wasn't enough items to take away.
+
+    """
+
+    if item == "coin":
+        if item_check(person, amount, "coin"):
+            save[person]["coins"] += amount
+            return True
+        else:
+            return False
+    if not save[person]["inventory"].get(item):
+        save[person]["inventory"][item] = amount
+    else:
+        if save[person]["inventory"][item] + amount < 0:
+            return False
+        else:
+            save[person]["inventory"][item] += amount
+            return True
+
+
+def item_set(person, amount, item):
+    """Set the amount of items someone has
+
+    Arguments:
+
+        person: int
+            ID of person to give stuff to.
+        amount: int
+            Amount of items to give.
+        item: str
+            ID of the item, or "coin" for coins.
+
+    """
+
+    create_save(person)
+    if item == "coin":
+        save[person]["coins"] = amount
+    else:
+        save[person]["inventory"][item] = amount
+
+
 @client.event
 async def on_ready():
     logging.info('Login as {0.user} successful.'.format(client))
@@ -159,24 +262,6 @@ async def on_message(message):
             # Only listen people saying bork, and ignore itself.
             return
 
-        def create_save(person, is_author=False):
-            """Create an entry for a person in the save dict."""
-            if not save.get(person):
-                save[person] = {}
-            save_defaults = {
-                "coins": 0,
-                "inventory": {},
-                "cooldown": {},
-                "mine": {"depth": 0, "current": [], "last_use": 0},
-                "black":{"deals":[],"trust":0}}
-            for default in save_defaults.keys():
-                if not save[person].get(default):
-                    save[person][default] = save_defaults[default]
-            if not save[person]["mine"].get("last_use"):
-                save[person]["mine"]["last_use"] = 0
-            if (not save[person].get("joined")) and is_author:
-                # Author's first use of the bot.
-                save[person]["joined"] = time.time()
         create_save(author, True)
         if "shutdown" in message.content:
             if author == 437654201863241740:
@@ -192,11 +277,11 @@ async def on_message(message):
             ("commands", "commands"),
             ("date", "time"),
             ("help", "help"),
+            ("black", "black"),
             ("buy", "buy"),
             ("share", "share"),
             ("gift", "gift"),
             ("value", "value"),
-            ("black", "black"),
             ("inventory", "inventory"),
             ("inv", "inventory"),
             ("shop", "shop"),
@@ -1007,8 +1092,151 @@ async def on_message(message):
                     save[author]["inventory"][item]
             await message.channel.send("ur stuff worth {} dogecoin".format(sell_value))
         if cmd == "black":
-            trust = save[author]["black"]["trust"]
-            deals = save[author]["black"]["deals"]
+            # Daily market fluctuations
+            market_random = random.Random(time.time()//86400+1)
+
+            def reset_random():
+                global market_random
+                market_random = random.Random(time.time()//86400)
+            data = save[author]["black"]
+            trust = data["trust"]
+            deals = []
+
+            # Because random is deterministic (PRNG), we only store the seed.
+            # And because the seed is based on the day, we get daily fluctuations.
+            available_deals = []
+            for i in dogeyblack.sits[:trust+1]:
+                available_deals.extend(i)
+            for deal in available_deals:
+                # Because we use market_random, results only
+                # change after a day
+                if market_random.random()*100 <= deal.chance:
+                    deals.append(deal)
+            reset_random()
+
+            embed = discord.Embed(title="black market")
+
+            curr_deal = 0
+            for deal in deals:
+                if deal.deal_id in message.content:
+                    curr_deal = deal
+                    break
+
+            if curr_deal:
+                # Both ends of the deal
+                costs = []
+                rewards = []
+
+                for item in deal.costs:
+                    costs.append([item.item_id, market_random.randint(
+                        item.count_min, item.count_max)])
+                for item in deal.rewards:
+                    rewards.append([item.item_id, market_random.randint(
+                        item.count_min, item.count_max)])
+                reset_random()
+
+            if "info" in message.content and curr_deal:
+                # Get info for a deal id
+                embed.title = "info for\n{} - {}".format(curr_deal.provider,curr_deal.title)
+                embed.description = curr_deal.desc.format(
+                    *(costs+rewards))
+                embed.add_field(name="to accept deal:",
+                                value=curr_deal.accept_str)
+                await message.channel.send(embed=embed)
+                return
+                
+            elif (
+                "accept" in message.content
+                    or "buy" in message.content) and curr_deal:
+                # Accept deal.
+
+                deal_quantity = ''.join(
+                        [i for i in message.content if i.isdigit()])
+                if bool(deal_quantity):
+                    deal_quantity = int(deal_quantity)
+                else:
+                    deal_quantity = 1
+
+                if deal_quantity < curr_deal.count_min:
+                    embed.description = "that is not enough. minimum is {} for this deal.".format(
+                        curr_deal.count_min)
+                elif deal_quantity > curr_deal.count_max:
+                    embed.description = "that is too much. maximum is {} for this deal.".format(
+                        curr_deal.count_min)
+
+                for cost in costs:
+                    cost[1] *= deal_quantity
+                    if cost[0] == "coin":
+                        if not item_check(author, -cost[1], "coin"):
+                            embed.description = "u don't have enough dogecoins. such sad."
+                            await message.channel.send(embed=embed)
+                            return
+                    elif not item_check(author, -cost[1], cost[0]):
+                        embed.description = "u don't have enough {}. such sad.".format(
+                            dogeyitems.dic.get(cost[1]).name
+                        )
+                        await message.channel.send(embed=embed)
+                        return
+                for cost in costs:
+                    if cost[0] == "coin":
+                        item_give(author, -cost[1], "coin")
+                    else:
+                        item_give(author, -cost[1], cost[0])
+                if random.random()*100 <= curr_deal.betray_chance:
+                    embed.description = curr_deal.betray_str.format(
+                        *(costs+rewards)
+                    )
+                    await message.channel.send(embed=embed)
+                    return
+                else:
+                    for reward in rewards:
+                        reward[1] *= deal_quantity
+                        if reward[0] == "coin":
+                            item_give(author, reward[1], "coin")
+                        else:
+                            item_give(author, reward[1], reward[0])
+                    embed.description = curr_deal.success_str.format(
+                        *(costs+rewards)
+                    )
+                    if random.randint(1,10) == 1:
+                        if trust < 6:
+                            save[author]["black"]["trust"] += 1
+                            embed.add_field(name="wow!",value="you now have more trust within the black market.\ncheck out the new available deals.")
+                        if trust == 6:
+                            save[author]["black"]["trust"] += 1
+                            embed.add_field(name="wow!",value="you are now a core member of the black market.\ncheck out the new available deals.")
+                    await message.channel.send(embed=embed)
+                    return
+
+            # No command was issued, so we display deals
+            if len(deals) == 0:
+                embed.description = 'wow the black market is inactive today maybe rob someone?'
+                await message.channel.send(embed=embed)
+                return
+            else:
+                embed.description = "{} deals. wow such illegal\nbtw the deals reset every day at midnight UTC".format(
+                    len(deals))
+            item_per_page = 6
+            total_pages = ceil(len(deals)/item_per_page)
+            page_nmb = ''.join([i for i in message.content if i.isdigit()])
+            if bool(page_nmb):
+                page_nmb = int(page_nmb)-1
+            else:
+                page_nmb = 0
+            if page_nmb+1 > total_pages or page_nmb < 0:
+                page_nmb = 0
+            embed.set_footer(text="page {} out of {}".format(
+                page_nmb+1, total_pages))
+            for deal in deals[page_nmb*item_per_page:(page_nmb+1)*item_per_page]:
+                embed.add_field(
+                    name="{} - {}"
+                    .format(deal.provider, deal.title),
+                    value="`bork black market info {}` for more info"
+                    .format(deal.deal_id),
+                    inline=True)
+            await message.channel.send(embed=embed)
+            return
+
         with open("dogebase.txt", encoding="utf-8") as f:
             text = f.read().split("\n")
             random.shuffle(text)
