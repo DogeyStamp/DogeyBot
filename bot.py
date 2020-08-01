@@ -335,7 +335,7 @@ async def on_message(message):
                     return
             else:
                 save[author]["cooldown"][cmd] = time.time()
-        if random.randint(1, 250) == 1 and cmd:
+        if random.randint(1, 75) == 1 and cmd:
             available_items = [i for i in save[author]["inventory"].keys(
             ) if save[author]["inventory"][i] > 0]
             buff = []
@@ -1198,7 +1198,7 @@ async def on_message(message):
                     embed.description = curr_deal.success_str.format(
                         *(costs+rewards)
                     )
-                    if random.randint(1,10) == 1:
+                    if random.randint(1,10) == 1 and curr_deal.trust_level == trust:
                         if trust < 6:
                             save[author]["black"]["trust"] += 1
                             embed.add_field(name="wow!",value="you now have more trust within the black market.\ncheck out the new available deals.")
@@ -1214,7 +1214,7 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
                 return
             else:
-                embed.description = "{} deals. wow such illegal\nbtw the deals reset every day at midnight UTC".format(
+                embed.description = "{} deals. wow such illegal\nbtw the deals and their prices reset every day at midnight UTC".format(
                     len(deals))
             item_per_page = 6
             total_pages = ceil(len(deals)/item_per_page)
