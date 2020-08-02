@@ -149,7 +149,7 @@ sits = [
             "the mine was a hoax ***-{0[1]} dogecoin***",
             [ItemCoins("coin", 250, 400)],
             [ItemCoins("coal", 420, 500)],
-            40,
+            50,
             90,
             "coal",
             1, 3,
@@ -161,11 +161,11 @@ sits = [
             "the deal was a hoax ***-{0[1]} dogecoin***",
             [ItemCoins("coin", 40, 60)],
             [ItemCoins("iron", 100, 100)],
-            40,
+            60,
             70,
             "iron",
             1, 15,
-            "`bork buy 10 iron from the black market`")
+            "`bork buy a load of iron from the black market`")
     ],
     [
         # Trust level 2
