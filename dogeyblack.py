@@ -86,7 +86,7 @@ sits = [
             "Haha I stole your ***{0[1]} coins*** and gave you nothing back meowww",
             [ItemCoins("coin", 1, 1)],
             [ItemCoins("pamphlet", 1, 1)],
-            25,
+            60,
             90,
             "pamphlet",
             1, 121,
