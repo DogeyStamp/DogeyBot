@@ -13,7 +13,6 @@ markovify==0.8.0
 mccabe==0.6.1
 mpmath==1.1.0
 multidict==4.7.6
-pkg-resources==0.0.0
 praw==7.0.0
 prawcore==1.4.0
 pylint==2.5.3
