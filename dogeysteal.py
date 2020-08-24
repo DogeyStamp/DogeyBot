@@ -53,7 +53,7 @@ steal_checks = [
         defense_item="bunker",
         defense_consume=True,
         offense_item="nuke",
-        offense_max=70,
+        offense_max=20,
         offense_min=10,
         consume=True),
     StealCheck(

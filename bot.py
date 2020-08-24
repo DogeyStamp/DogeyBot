@@ -87,52 +87,6 @@ def item_info(item_obj):
     return embed
 
 
-def save_data():
-    """Saves the user data to disk."""
-    with open("save", "w", encoding="utf-8") as save_file:
-        save_file.write(str(save))
-        save_file.close()
-
-
-def order_of_magnitude(number):
-    """Return the order of magnitude of the number."""
-    if number == 0:
-        return 0
-    return floor(log(number, 10))
-
-
-async def save_task():
-    """Save data every 30 seconds."""
-    try:
-        while(True):
-            await asyncio.sleep(30)
-            save_data()
-    except asyncio.CancelledError:
-        logging.info("Shutdown of data save task successful.")
-
-
-async def aexec(code):
-    exec(
-        f'async def __ex(): ' +
-        ''.join(f'\n {l}' for l in code.split('\n'))
-    )
-    return await locals()['__ex']()
-
-
-async def py_console():
-    while True:
-        cmd = await ainput(">>> ")
-        print()
-        try:
-            if "await" in cmd:
-                await aexec(cmd)
-            else:
-                exec(cmd)
-        except Exception as err:
-            print(err)
-        print()
-
-
 def close_bot():
     """Shutdown the bot."""
     logging.info("Initiating shutdown...")
@@ -224,6 +178,25 @@ def item_give(person, amount, item):
             return True
 
 
+def item_amount(person, item):
+    """Get amount of items someone has.
+
+    Arguments:
+
+        person: int
+            ID of person to give stuff to.
+        item: str
+            ID of the item, or "coin" for coins.
+    """
+
+    create_save(person)
+    if item == "coin":
+        return save[person]["coins"]
+    if save[person]["inventory"].get(item):
+        return save[person]["inventory"][item]
+    return 0
+
+
 def item_set(person, amount, item):
     """Set the amount of items someone has
 
@@ -243,6 +216,89 @@ def item_set(person, amount, item):
         save[person]["coins"] = amount
     else:
         save[person]["inventory"][item] = amount
+
+
+def excess(player, check=True):
+    """Remove excess items from players according to dogeyitems.
+
+    player (int):
+        id of person to remove items from
+    check (bool):
+        Whether to check if player's save exists. Default true.
+
+    Returns list of items and amount removed."""
+    if check:
+        create_save(player)
+
+    removed = []
+
+    for item in save[player]["inventory"]:
+        excess = dogeyitems.dic[item].excess
+        amount = item_amount(player, item)
+        if amount > excess:
+            removed.append([item, amount-excess])
+            item_give(player,dogeyitems.dic[item].sell_cost*(amount-excess),"coin")
+            item_give(player, -(amount - excess), item)
+    return removed
+
+
+def exec_all(func, *args):
+    """Execute a function for each player with a save.
+
+    func (function):
+        Function to be executed on a player.
+    *args (mixed):
+        Arguments to be passed to the function after the player id.
+    """
+
+    for entry in save.keys():
+        func(entry, *args)
+
+
+def save_data():
+    """Saves the user data to disk."""
+    with open("save", "w", encoding="utf-8") as save_file:
+        save_file.write(str(save))
+        save_file.close()
+
+
+def order_of_magnitude(number):
+    """Return the order of magnitude of the number."""
+    if number == 0:
+        return 0
+    return floor(log(number, 10))
+
+
+async def save_task():
+    """Save data every 30 seconds."""
+    try:
+        while(True):
+            await asyncio.sleep(30)
+            save_data()
+    except asyncio.CancelledError:
+        logging.info("Shutdown of data save task successful.")
+
+
+async def aexec(code):
+    exec(
+        f'async def __ex(): ' +
+        ''.join(f'\n {l}' for l in code.split('\n'))
+    )
+    return await locals()['__ex']()
+
+
+async def py_console():
+    while True:
+        cmd = await ainput(">>> ")
+        print()
+        try:
+            if "await" in cmd:
+                await aexec(cmd)
+            else:
+                exec(cmd)
+        except Exception as err:
+            print(err)
+        print()
 
 
 @client.event
@@ -1137,21 +1193,22 @@ async def on_message(message):
 
             if "info" in message.content and curr_deal:
                 # Get info for a deal id
-                embed.title = "info for\n{} - {}".format(curr_deal.provider,curr_deal.title)
+                embed.title = "info for\n{} - {}".format(
+                    curr_deal.provider, curr_deal.title)
                 embed.description = curr_deal.desc.format(
                     *(costs+rewards))
                 embed.add_field(name="to accept deal:",
                                 value=curr_deal.accept_str)
                 await message.channel.send(embed=embed)
                 return
-                
+
             elif (
                 "accept" in message.content
                     or "buy" in message.content) and curr_deal:
                 # Accept deal.
 
                 deal_quantity = ''.join(
-                        [i for i in message.content if i.isdigit()])
+                    [i for i in message.content if i.isdigit()])
                 if bool(deal_quantity):
                     deal_quantity = int(deal_quantity)
                 else:
@@ -1198,13 +1255,15 @@ async def on_message(message):
                     embed.description = curr_deal.success_str.format(
                         *(costs+rewards)
                     )
-                    if random.randint(1,10) == 1 and curr_deal.trust_level == trust:
+                    if random.randint(1, 10) == 1 and curr_deal.trust_level == trust:
                         if trust < 6:
                             save[author]["black"]["trust"] += 1
-                            embed.add_field(name="wow!",value="you now have more trust within the black market.\ncheck out the new available deals.")
+                            embed.add_field(
+                                name="wow!", value="you now have more trust within the black market.\ncheck out the new available deals.")
                         if trust == 6:
                             save[author]["black"]["trust"] += 1
-                            embed.add_field(name="wow!",value="you are now a core member of the black market.\ncheck out the new available deals.")
+                            embed.add_field(
+                                name="wow!", value="you are now a core member of the black market.\ncheck out the new available deals.")
                     await message.channel.send(embed=embed)
                     return
 
