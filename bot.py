@@ -237,7 +237,8 @@ def excess(player, check=True):
         amount = item_amount(player, item)
         if amount > excess:
             removed.append([item, amount-excess])
-            item_give(player,dogeyitems.dic[item].sell_cost*(amount-excess),"coin")
+            item_give(
+                player, dogeyitems.dic[item].sell_cost*(amount-excess), "coin")
             item_give(player, -(amount - excess), item)
     return removed
 
@@ -418,6 +419,17 @@ async def on_message(message):
                         save[author]["inventory"][item] -= amount
                         save[author]["coins"] += cost
                 await message.channel.send(embed=embed)
+        if random.randint(1, 5) == 1 and cmd:
+            embed = discord.Embed(
+                title="message from storage doggo", description="we went through your inventory and it's got too much stuff. we sold some stuff.")
+            item_removed = False
+            for item in excess(author):
+                coin_value = dogeyitems.dic[item[0]].sell_cost * item[1]
+                embed.add_field(name="sold {0[1]} {0[0]}".format(item), value="for {} dogecoins".format(coin_value))
+                item_removed = True
+            if item_removed:
+                await message.channel.send(embed=embed)
+
         if cmd == 'time':
             await message.channel.send(datetime.datetime.now())
             return
