@@ -38,7 +38,7 @@ items = [Item("alpha", "test badge alpha", -1, -1, "test item to test the invent
          Item("bug", "ancient bug", -1, 1000,
               "this is scientifically interesting. it definitely won't escape the lab! haha.", "collectable", False, 1, 100),
          Item("bomb", "bomb", 1000, 2,
-              "this is a bomb. it should be safe. right??\ncan destroy vaults", "offense", True, 100, 100),
+              "this is a bomb. it should be safe. right??\ncan destroy vaults", "offense", True, 100, 260),
          Item("pliers", "pliers", 500, 50,
               "lets you cut wires. defuse bomb. cut locks. very helpful.", "item", True, 0, 4),
          Item("aoww", "aowwsteeng sculpture", 3500, 4000,
