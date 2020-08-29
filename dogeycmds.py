@@ -1,10 +1,11 @@
 cmds = {"help": ["get halp for doggo speak!", "Bork bork. I need ***help***!!", 1, "general"],
         "commands": ["detailed doggo-speak lessons", "Bork. What's all the ***commands*** you have??", 1, "general"],
-        "calculate": ["nerd doggo calculates equation for you!", "Bork. Hey DogeyBot, ***what's*** 1 + 1?", 1, "utility"],
+        #calculate": ["nerd doggo calculates equation for you!", "Bork. Hey DogeyBot, ***what's*** 1 + 1?", 1, "utility"], #removed due to issues with dos
         "time": ["get the time. it's snacc time!", "Bork bork!! What's the ***time***?!", 1, "utility"],
         "meme": ["doggo memes. such funny", "Bork meme pls", 1, "fun"],
         "politic": ["r/politics posts", "bork bork i want some ***politics*** to make me rage", 1, "fun"],
         "news": ["get the news ~~about doggos~~", "bork bork doggo of the lake what ***news*** do you have?", 1, "fun"],
+        #"doge-news": ["get news from the game universe", "bork plis gib doge news.", 1, "bot"],
         "quote": ["get a quote", "bork bork booooored, i want a ***quote***", 1, "fun"],
         "balance": ["get ur dogecoin balance", "bork bork money money!!!!! whats me ***balance***", 1, "currency"],
         "inventory": ["see ur inventory", "bork whats in my inventory?!", 1, "currency"],
@@ -19,4 +20,4 @@ cmds = {"help": ["get halp for doggo speak!", "Bork bork. I need ***help***!!", 
         "rich": ["see who is richest", "bork who is richest??", 10, "currency"],
         "value": ["see how much money you can make from your ores and collectables", "bork what's the value of me items??", 10, "currency"],
         "black": ["wait the black market is illegal. u can do deals with black market people. low price. risky tho.", "bork whats the deals at the black market", 5, "currency"]}
-categories = ["general", "utility", "fun", "currency"]
+categories = ["general", "utility", "fun", "currency", "bot"]
