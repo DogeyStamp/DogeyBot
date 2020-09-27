@@ -850,17 +850,18 @@ async def on_message(message):
                 await message.channel.send("hey u need to wait few days so me can tell ur not a new doggo here thx")
                 save[author]["cooldown"]["share"] = 0
                 return
-            if quantity <= limit:
+            if quantity <= limit or True: #disable limit
                 if save[author]["coins"] == 0:
                     tax = 0
                 else:
                     tax = min(
                         order_of_magnitude(save[author]["coins"])*0.08,
                         0.99999999)
+                tax *= quantity
                 old_quantity = quantity
                 quantity -= tax
                 quantity = round(quantity)
-                save[author]["coins"] -= quantity
+                save[author]["coins"] -= old_quantity
                 save[share_user.id]["coins"] += quantity
                 if quantity == old_quantity:
                     embed = discord.Embed(
