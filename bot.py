@@ -333,7 +333,7 @@ async def on_message(message):
         cmd_dict = collections.OrderedDict([
             ("commands", "commands"),
             ("date", "time"),
-            ("help", "help"),
+            ("help", "commands"),
             ("black", "black"),
             ("buy", "buy"),
             ("share", "share"),
