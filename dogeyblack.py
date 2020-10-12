@@ -215,7 +215,7 @@ sits = [
             "i don't have a lava suit yet, and lied about the lava. ***-{0[1]} dogecoin***",
             [ItemCoins("coin", 10, 29)],
             [ItemCoins("lava", 1, 1)],
-            50,
+            70,
             70,
             "lava",
             1, 100,
