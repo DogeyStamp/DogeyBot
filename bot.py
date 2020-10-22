@@ -441,6 +441,8 @@ async def on_message(message):
         if cmd == 'commands':
             msg_cpy = message.content.lower()
             msg_cpy = msg_cpy.replace("bork", "").replace("commands", "", 1)
+            msg_cpy = msg_cpy.replace("help", "", 1)
+
             for cmd in dogeycmds.cmds.keys():
                 if msg_cpy.find(cmd) != -1:
                     embed = discord.Embed(
