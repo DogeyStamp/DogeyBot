@@ -130,8 +130,8 @@ sits = [
         Deal(
             "panda", "golden chopsticks",
             "highly valuable golden chopsticks. need ***{0[1]} chapstacks soup pamphlets*** in exchange.",
-            "these are counterfeit lol ***{0[1]} dogecoin*** for ***{1[1]} chopstick.*** you can sell it full price tho. i also gave you free fortune cookies.",
-            "i led you all along there were no chopsticks in the first place ***-{0[1]} dogecoin***",
+            "these are counterfeit lol ***{0[1]} pamphlet*** for ***{1[1]} chopstick.*** you can sell it full price tho. i also gave you free fortune cookies.",
+            "i led you all along there were no chopsticks in the first place ***-{0[1]} pamphlets***",
             [ItemCoins("pamphlet", 400, 700)],
             [ItemCoins("chopstick", 1, 1), ItemCoins("fortune", 2, 4)],
             40,

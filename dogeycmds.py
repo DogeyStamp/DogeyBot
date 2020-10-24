@@ -19,5 +19,6 @@ cmds = {"help": ["get halp for doggo speak!", "Bork bork. I need ***help***!!", 
         "scout": ["i wamt rob but need prepare. hey let's scout his house. see person's best defense (will see vault if person has vault and safe)", "bork scout [person]", 60*5, "currency"],
         "rich": ["see who is richest", "bork who is richest??", 10, "currency"],
         "value": ["see how much money you can make from your ores and collectables", "bork what's the value of me items??", 10, "currency"],
-        "black": ["wait the black market is illegal. u can do deals with black market people. low price. risky tho.", "bork whats the deals at the black market", 5, "currency"]}
+        "black": ["wait the black market is illegal. u can do deals with black market people. low price. risky tho.", "bork whats the deals at the black market", 5, "currency"],
+        "daily": ["get coins daily", "bork claim my daily coins pls", 5, "currency"]}
 categories = ["general", "utility", "fun", "currency", "bot"]

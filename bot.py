@@ -50,7 +50,8 @@ def create_save(person, is_author=False):
         "inventory": {},
         "cooldown": {},
         "mine": {"depth": 0, "current": [], "last_use": 0},
-        "black": {"trust": 0}}
+        "black": {"trust": 0},
+        "daily": 0}
     for default in save_defaults.keys():
         if not save[person].get(default):
             save[person][default] = save_defaults[default]
@@ -344,6 +345,7 @@ async def on_message(message):
             ("shop", "shop"),
             ("sell", "sell"),
             ("halp", "help"),
+            ("daily", "daily"),
             ("time", "time"),
             ("bank", "balance"),
             ("bal", "balance"),
@@ -1164,6 +1166,8 @@ async def on_message(message):
                 sell_value += item_obj.sell_cost * \
                     save[author]["inventory"][item]
             await message.channel.send("ur stuff worth {} dogecoin".format(sell_value))
+        if cmd == "daily":
+            pass
         if cmd == "black":
             # Daily market fluctuations
             market_random = random.Random(time.time()//86400+1)
@@ -1247,7 +1251,7 @@ async def on_message(message):
                             return
                     elif not item_check(author, -cost[1], cost[0]):
                         embed.description = "u don't have enough {}. such sad.".format(
-                            dogeyitems.dic.get(cost[1]).name
+                            dogeyitems.dic.get(cost[0]).name
                         )
                         await message.channel.send(embed=embed)
                         return
