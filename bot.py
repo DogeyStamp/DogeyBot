@@ -796,10 +796,10 @@ async def on_message(message):
                     if save[author]["inventory"].get(item.item_id):
                         if quantity > item.gift_limit:
                             await message.channel.send(
-                                "wow. such amount! too much. \
-                                limit for {} is {}.".format(
+                                "wow. such amount! too much. limit for {} is {}. you wamted give {}.".format(
                                     item.name,
-                                    item.gift_limit))
+                                    item.gift_limit,
+                                    quantity))
                             save[author]["cooldown"]["gift"] = 0
                         elif save[author]["inventory"][item.item_id] >= quantity:
                             embed = discord.Embed(
